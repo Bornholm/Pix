@@ -1,0 +1,153 @@
+
+/*
+ * Color Scheme
+ */
+
+@backgroundColor : #fdfdfd;
+
+@textColor : #555;
+
+.noMarginAndPadding {
+	margin : 0;
+	padding : 0;
+}
+
+.shadeGradient ( @baseColor ) {
+
+	@firstShadeRatio : 2%;
+	@secondShadeRatio : 10%;
+
+	background: @baseColor;
+	background: -moz-linear-gradient(top, @baseColor 0%, darken( @baseColor, @secondShadeRatio) 62%, darken( @baseColor, @firstShadeRatio) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@baseColor), color-stop(62%,darken( @baseColor, @secondShadeRatio)), color-stop(100%, darken( @baseColor, @firstShadeRatio)));
+	background: -webkit-linear-gradient(top, @baseColor 0%,darken( @baseColor, @secondShadeRatio) 62%,darken( @baseColor, @firstShadeRatio) 100%);
+	background: -o-linear-gradient(top, @baseColor 0%,darken( @baseColor, @secondShadeRatio) 62%,darken( @baseColor, @firstShadeRatio) 100%);
+	background: -ms-linear-gradient(top, @baseColor 0%,darken( @baseColor, @secondShadeRatio) 62%,darken( @baseColor, @firstShadeRatio) 100%);
+	background: linear-gradient(top, @baseColor 0%,darken( @baseColor, @secondShadeRatio) 62%,darken( @baseColor, @firstShadeRatio) 100%);
+}
+
+.ease ( @delay ) {
+	-webkit-transition: all  @delay ease-in;
+	-moz-transition: all  @delay ease-in;
+	-ms-transition: all  @delay ease-in;
+	-o-transition: all  @delay ease-in;
+	transition: all  @delay ease-in;
+}
+
+.inlightText {
+	text-shadow: 1px 1px 0px #ffffff;
+	filter: dropshadow(color=#ffffff, offx=1, offy=1);
+}
+
+.innerShadow {
+	-webkit-box-shadow: inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2);
+	box-shadow: inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2);
+}
+
+body {
+	font-family : Helvetica, sans-serif;
+	background : white;
+	width : 100%;
+	height : 100%;
+	.noMarginAndPadding;
+	color : @textColor;
+	font-size : 12px;
+}
+
+#top-bar {
+
+	@lineHeight : 25px;
+
+	-webkit-box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2);
+	box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2);
+
+	position : fixed;
+	display: block;
+	height : @lineHeight;
+	width : 100%;
+	border-bottom : 2px solid #ccc;
+	z-index : 100;
+
+	.noMarginAndPadding;
+	//.shadeGradient(#ffffff);
+	background : @backgroundColor;
+
+	#logo {
+		margin : 0px 20px;
+		font-weight : bold;
+		font-size : 14px;
+		line-height : @lineHeight;
+	}
+
+	#main-menu {
+		display: inline-block;
+		line-height : @lineHeight;
+	}
+
+	ul.ui-menu.level-0 {
+
+		.noMarginAndPadding;
+
+		span.ui-menu-label {
+			margin : 0px 15px;
+			font-weight : bold;
+		}
+
+		li.ui-menu-item {
+			list-style : none;
+			cursor : pointer;
+		}
+
+		&>li.ui-menu-item {
+
+			display: inline-block;
+			
+			ul.ui-menu {
+				display :none;
+			}
+
+			&.active {
+
+				ul.ui-menu {
+
+					display : block;
+					position : absolute;
+					z-index : 50;
+					.noMarginAndPadding;
+					border-bottom : 1px solid #ccc;
+					border-left : 1px solid #ccc;
+					border-right : 1px solid #ccc;
+
+					li.ui-menu-item {
+						display: block;
+
+						&:active {
+							.innerShadow;
+						}
+
+						&:hover {
+							background : #ddd;
+						}
+					}
+
+
+				}
+
+			}
+		}
+	}
+}
+
+
+.ui-radial-menu-button {
+	@diameter : 40px;
+	width : @diameter;
+	height : @diameter;
+	border-radius : @diameter;
+	.shadeGradient(#fff);
+	-webkit-box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.1);
+	-moz-box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.1);
+	box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.1);
+}
