@@ -13,23 +13,20 @@ define( ["yajf/extension"], function( Extension ) {
 				publish : function( topic, args ) {
 					var subs = cache[topic],
 						len = subs ? subs.length : 0;
-					//can change loop or reverse array if the order matters
-					while( len-- ){ 
-						subs[len].apply( null, args || [] ); 
+					while( len-- ){
+						subs[len].callback.apply( subs[len].context, args || [] ); 
 					}
+					console.log(topic, args);
 				},
 
-				subscribe : function( topic, callback ) {
+				subscribe : function( topic, callback, context ) {
 					!cache[topic] && ( cache[topic] = [] );
-					cache[topic].push(callback);
-					return [topic, callback];
+					cache[topic].push({ context : context, callback : callback });
 				},
 
 				unsubscribe : function( topic, callback ) {
-
 					var subs = cache[topic],
 						len = subs ? subs.length : 0;
-					
 					while( len-- ){
 						subs[len] === callback && subs.splice(len, 1);
 					}

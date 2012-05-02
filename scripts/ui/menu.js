@@ -56,7 +56,9 @@ define(["libs/classy", "libs/zepto.min"], function( Class ) {
 
 					if( itemId ) {
 						item = self._findMenuItem( itemId );
-						item && self.onItemClick( item );
+						if( item && !item.disabled ) {
+							self.onItemClick( item );
+						}
 					}
 				}
 
@@ -74,6 +76,7 @@ define(["libs/classy", "libs/zepto.min"], function( Class ) {
 				var label,
 					li = $("<li />");
 					li.addClass("ui-menu-item");
+					item.disabled && li.addClass("disabled");
 					item._id = self._createItemId();
 					li.data( "item-id", item._id );
 				if( item.label ) {
@@ -90,29 +93,32 @@ define(["libs/classy", "libs/zepto.min"], function( Class ) {
 		},
 
 		_createItemId : function() {
-			return (Math.random()*100000>>1).toString(16)+"-"+(Math.random()*100000<<1).toString(16);
+			return (Math.random()*100000>>1).toString(16)+
+			"-"+
+			(Math.random()*100000<<1).toString(16);
 		},
 
-		_findMenuItem : function( id ) {
+		_findMenuItem : function( id, items ) {
 
 			var item,
-				self = this,
-				parse = function( items ) {
-					$.each( items, function( ii, i ) {
-						if (i._id === id) {
-							item = i;
-							return false;
-						} else if( i.items ) {
-							parse( i.items );
-							if (item) {
-								return false
-							};
-						}
-					});
-				};
-			parse( self.items );
+				self = this;
+
+			items = items || self.items;
+
+			$.each( items, function( ii, i ) {
+				if (i._id === id) {
+					item = i;
+					return false;
+				} else if( i.items ) {
+					item = self._findMenuItem( id, i.items );
+					if (item) {
+						return false
+					};
+				}
+			});
+
 			return item;
-		},
+		}
 
 	});
 

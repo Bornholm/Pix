@@ -12,6 +12,10 @@
 	padding : 0;
 }
 
+.right {
+	text-align : right;
+}
+
 .shadeGradient ( @baseColor ) {
 
 	@firstShadeRatio : 2%;
@@ -45,6 +49,11 @@
 	box-shadow: inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2);
 }
 
+.outShadow {
+    -webkit-box-shadow:  0px 0px 3px 1px rgba(0, 0, 0, 0.1);
+    box-shadow:  0px 0px 3px 1px rgba(0, 0, 0, 0.1);
+}
+
 body {
 	font-family : Helvetica, sans-serif;
 	background : white;
@@ -55,9 +64,60 @@ body {
 	font-size : 12px;
 }
 
+#modal {
+	background-color : rgba(0,0,0,0.3);
+	position: fixed;
+	width : 100%;
+	height : 100%;
+	z-index : 100000;
+	display: none;
+}
+
+@topBarHeight : 25px;
+
+#workspace {
+	.noMarginAndPadding;
+	width : 100%;
+	height : 100%;
+
+	div.ui-panel {
+
+		display: table;
+		background : white;
+		border : 1px solid #ccc;
+		position : absolute;
+		top : @topBarHeight + 15;
+		left : 15px;
+		overflow: hidden;
+		.outShadow;
+
+		.ui-panel-title {
+
+			@titleHeight : 25px;
+			height : @titleHeight;
+			line-height : @titleHeight;
+			border-bottom : 1px solid #ccc;
+			padding : 0px 10px;
+			font-weight : bold;
+			
+			cursor : move;
+
+			&:active {
+				cursor : move;
+			}
+
+		}
+
+		.ui-panel-content {
+			overflow: auto;
+			padding : 10px;
+		}
+	}
+}
+
 #top-bar {
 
-	@lineHeight : 25px;
+	@lineHeight : @topBarHeight;
 
 	-webkit-box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2);
 	-moz-box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2);
@@ -83,7 +143,7 @@ body {
 
 	#main-menu {
 		display: inline-block;
-		line-height : @lineHeight;
+		line-height : @lineHeight - 1;
 	}
 
 	ul.ui-menu.level-0 {
@@ -98,6 +158,11 @@ body {
 		li.ui-menu-item {
 			list-style : none;
 			cursor : pointer;
+			background : white;
+		}
+
+		li.ui-menu-item.disabled {
+			color : #ccc;
 		}
 
 		&>li.ui-menu-item {
@@ -139,7 +204,6 @@ body {
 		}
 	}
 }
-
 
 .ui-radial-menu-button {
 	@diameter : 40px;
