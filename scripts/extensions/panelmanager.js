@@ -1,10 +1,12 @@
+// Require PubSub Extension
+
 define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 
 	"use strict";
 
 	var PanelManager = Extension.$extend({
 
-		__init__ : function( opts ) {
+		getSandboxExtension : function( opts ) {
 
 			opts = opts || {};
 
@@ -12,21 +14,30 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 
 			self._container = opts.container;
 			self._modalLayer = opts.modalLayer;
+
+			self._bounds = opts.bounds || {
+				top : 0,
+				left : 0,
+				right : $(window).width(),
+				bottom : $(window).height()
+			};
+
 			self._previousMousePos = {},
-			self._isDragging = false;
+			self._draggingTarget = null;
 			self._panels = [];
+			self._nextId = 0;
 
 			self._initEventsHandlers();
 
-		},
-
-		getSandboxExtension : function() {
-			var self = this;
+			// Expose API
 			return {
+
 				addPanel : self._addPanel.bind( self ),
 				removePanel : self._removePanel.bind( self ),
 				clear : self._clear.bind( self )
+
 			};
+
 		},
 
 		_clear : function() {
@@ -44,7 +55,9 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 		_addPanel : function( panelContent, panelTitle, isDraggable, isModal ) {
 
 			var self = this,
+				events = self.sandbox.events,
 				panel = new Panel({
+					id : self._nextId++,
 					content : panelContent,
 					title : panelTitle
 				});
@@ -55,6 +68,8 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 			isDraggable && panel.el.addClass("draggable");
 			isModal && self._setModal( panel );
 
+			events.publish("panel:focus", [ panel ] );
+
 			return panel;
 		},
 
@@ -62,8 +77,6 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 
 			var box,
 				self = this,
-				width = $(window).width(),
-				height = $(window).height(),
 				modalLayer = self._modalLayer;
 
 			modalLayer.show();
@@ -71,47 +84,79 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 			panel.el.addClass('modal');
 			
 			box = panel.el.offset();
+
 			panel.el.css({
 				'z-index' : modalLayer.css('z-index')+1,
-				left : width/2-box.width/2,
-				top : height/2-box.height/2,
+				left : '50%',
+				top : '50%',
+				'margin-left' : -box.width/2,
+				'margin-top' : -box.height/2,
 			});
 
+		},
+
+		_initEventsHandlers : function() {
+
+			var self = this,
+				container = self._container;
+
+			//Dragging
+			container.on({
+				'mousedown' : self._onStartDrag.bind( self ),
+			}, ".ui-panel-title");
+
+			$(document).on({
+				'mousemove' :  self._onPanelDragging.bind( self ),
+				'mouseup' :  self._onStopDrag.bind( self )
+			});
+
+			// Focus
+			container.on({
+				'mousedown' : self._onFocus.bind( self )
+			}, ".ui-panel");
+
+		},
+
+		_onFocus : function( evt ) {
+			var self = this,
+				target = $(evt.currentTarget),
+				events = self.sandbox.events;
+			self._container.append( target );
+			events.publish("panel:focus", [ self._findPanelByElement( target ) ] );
 		},
 
 		_onStartDrag : function( evt ) {
 			var self = this,
 				target = $(evt.currentTarget).parent(".ui-panel");
-			self._container.append( target );
-			self._isDragging = true;
+			self._draggingTarget = target;
 			return false;
 		},
 
+
 		_onStopDrag : function() {
 			var self = this;
-			self._isDragging = false; 
+			self._draggingTarget = null;
 			self._previousMousePos = null;
 			return false;
 		},
 
 		_onPanelDragging : function( evt ) {
 			
-			var target, prevPos, pos,
-				self = this;
+			var pos, x, y,
+				self = this,
+				prevPos = self._previousMousePos,
+				target = self._draggingTarget;
 
-			if( self._isDragging ) {
+			if( target ) {
 
-				prevPos = self._previousMousePos;
+				if( prevPos && target.hasClass('draggable') ) {
+					pos = target.offset();
 
-				if( prevPos ) {
-					target = $(evt.currentTarget).parent('.ui-panel');
-					if( target.hasClass('draggable') ) {
-						pos = target.offset();
-						target.css({
-							top : pos.top+ (evt.screenY - prevPos.y),
-							left : pos.left+ (evt.screenX - prevPos.x),
-						});
-					}
+					y = pos.top+ (evt.screenY - prevPos.y);
+					x = pos.left+ (evt.screenX - prevPos.x);
+					
+					self._boundsContain( x, y, pos.width, pos.height ) && target.css({ top : y, left : x });
+					
 				}
 
 				self._previousMousePos = prevPos = prevPos || {};
@@ -123,25 +168,25 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 
 		},
 
-		_initEventsHandlers : function() {
+		_boundsContain : function( x, y, width, height ) {
+			var bounds = this._bounds; //Fix this shit
+			return true;//x >= bounds.left && y >= bounds.top && x+width <= bounds.right && y+height <= bounds.bottom;
+		},
+
+		_findPanelByElement : function( el ) {
 
 			var self = this,
-				container = self._container;
+				panels = self._panels,
+				id = el.data('panel-id'),
+				len = panels.length;
 
-			//Dragging
-			container.on({
-
-				'mousedown' : self._onStartDrag.bind( self ),
-
-				'mouseup' :  self._onStopDrag.bind( self ),
-
-				'mouseout' :  self._onStopDrag.bind( self ),
-
-				'mousemove' :  self._onPanelDragging.bind( self )
-
-			}, ".ui-panel-title");
+			while(len--) {
+				if( panels[len].getId() === id) return panels[len];	
+			}
 
 		}
+
+
 
 	});
 

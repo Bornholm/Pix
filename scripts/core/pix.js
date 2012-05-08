@@ -2,12 +2,16 @@ define( [
 			'yajf/core', 
 			'modules/menu',
 			'modules/projectsmanager',
+			'modules/tools',
+			'modules/pencil',
 			"extensions/pubsub",
-			"extensions/panelmanager" 
+			"extensions/panelmanager",
+			"extensions/template" 
 		], 
 	function( Core, 
-			MenuMod, ProjectsManMod,
-			PubSubExt, PanManMod ) {
+			MenuMod, ProjectsManMod, ToolsMod,
+			PencilMod,
+			PubSubExt, PanManExt, TemplateExt ) {
 
 	var Pix = Core.$extend({
 
@@ -25,20 +29,34 @@ define( [
 
 		_registerModules : function() {
 			var self = this;
+
 			self.registerModule( 'menu', MenuMod );
 			self.registerModule( 'projects', ProjectsManMod );
+
+			// Tools
+			self.registerModule( 'tools', ToolsMod );
+			self.registerModule( 'pencil', PencilMod );
+
 		},
 
 		_registerExtensions : function() {
 			var self = this;
 			self.registerExtension( 'events', PubSubExt );
-			self.registerExtension( 'panelsManager', PanManMod, {
+			self.registerExtension( 'panelsManager', PanManExt, {
 				container : $('#workspace'),
-				modalLayer : $('#modal')
+				modalLayer : $('#modal'),
+				bounds : {
+					left : 0,
+					top : 27,
+					right : $(window).width(),
+					bottom : $(window).height()
+				}
 			});
+			self.registerExtension( 'template', TemplateExt );
 		},
 
 		start : function() {
+
 			var self = this;
 
 			self.startModule( 'menu', {
@@ -55,12 +73,9 @@ define( [
 						]
 					},
 					{ 
-						label : 'Test',
+						label : 'View',
 						items : [
-							{ label : 'T1', disabled : true  },
-							{ label : 'T2', disabled : true  },
-							{ label : 'T3', disabled : true  },
-							{ label : 'T4', disabled : true  }
+							{ label : 'Tools', id : 'toolset'  }
 						]
 					}
 
@@ -69,6 +84,8 @@ define( [
 
 			self.startModule( 'projects' );
 
+			self.startModule( 'tools' );
+			self.startModule( 'pencil' );
 
 		}
 

@@ -13,10 +13,11 @@ define( ["yajf/extension"], function( Extension ) {
 				publish : function( topic, args ) {
 					var subs = cache[topic],
 						len = subs ? subs.length : 0;
+					console.log(topic, args);
 					while( len-- ){
 						subs[len].callback.apply( subs[len].context, args || [] ); 
 					}
-					console.log(topic, args);
+					
 				},
 
 				subscribe : function( topic, callback, context ) {

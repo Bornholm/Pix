@@ -11,7 +11,7 @@ define( ['libs/classy', 'yajf/sandbox'], function( Class, Sandbox ) {
 			this._modules = {};
 			this._modulesInstances = {};
 			this._extensions = {};
-			this._sandboxClass = opts.sandbox || Sandbox; 
+			this._sandboxClass = opts.sandbox || Sandbox;
 		},
 
 
@@ -63,10 +63,9 @@ define( ['libs/classy', 'yajf/sandbox'], function( Class, Sandbox ) {
 				self = this,
 				sandboxExtension = {},
 				Sandbox = self._sandboxClass;
-			ext = new Extension( options );
-			sandboxExtension[ extensionName ] = ext.getSandboxExtension();
+			ext = new Extension( new Sandbox() );
+			sandboxExtension[ extensionName ] = ext.getSandboxExtension( options );
 			self._sandboxClass = Sandbox.$extend( sandboxExtension );
-			
 		}
 
 	});
