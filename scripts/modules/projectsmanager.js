@@ -37,7 +37,7 @@ define( [
 				panman = self.sandbox.panelsManager,
 				dom = self._getProjectCreationDom();
 
-			panel = panman.addPanel( dom, '<span>Create new project</span>',  false, true );
+			panel = panman.create( dom, '<span>Create new project</span>',  false, true );
 
 			panel.el.on('click', '.cancel-button', self._onProjectCreationCancelation.bind( self, panel ) );
 			panel.el.on('click', '.validate-button', self._onProjectCreationValidation.bind( self, panel ) );
@@ -47,7 +47,7 @@ define( [
 		_onProjectCreationCancelation : function( panel ) {
 			var self = this,
 				panman = self.sandbox.panelsManager;
-			panman.removePanel( panel );
+			panman.remove( panel );
 		},
 
 		_onProjectCreationValidation : function( panel ) {
@@ -65,7 +65,7 @@ define( [
 				p.name === "height" && (height = +p.value);
 			}
 
-			panman.removePanel( panel );
+			panman.remove( panel );
 
 			self._createNewProject( projectName, width, height );
 		},
@@ -87,7 +87,7 @@ define( [
 				height : height
 			});
 
-			panel = panman.addPanel( project.getMainView() , '<span>'+projectName+'</span>',  true );
+			panel = panman.create( project.getMainView() , '<span>'+projectName+'</span>',  true );
 
 			self._projects.push({
 				panel : panel,

@@ -32,8 +32,10 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 			// Expose API
 			return {
 
-				addPanel : self._addPanel.bind( self ),
-				removePanel : self._removePanel.bind( self ),
+				create : self._add.bind( self ),
+				restore : self._restore.bind( self ),
+				center : self._center.bind( self ),
+				remove : self._remove.bind( self ),
 				clear : self._clear.bind( self )
 
 			};
@@ -44,7 +46,7 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 			var container = this.container;
 		},
 
-		_removePanel : function( panel ) {
+		_remove : function( panel ) {
 			panel.el.off();
 			if( panel.el.hasClass('modal') ) {
 				this._modalLayer.hide();
@@ -52,7 +54,14 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 			panel.el.remove();
 		},
 
-		_addPanel : function( panelContent, panelTitle, isDraggable, isModal ) {
+		_restore : function( panel ) {
+			var self = this,
+				box = panel.el.offset();
+			!self._boundsContain( box.left, box.top, box.width, box.height ) && self._center( panel );
+			self._container.append( panel.el );
+		},
+
+		_add : function( panelContent, panelTitle, isDraggable, isModal ) {
 
 			var self = this,
 				events = self.sandbox.events,
@@ -75,23 +84,26 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 
 		_setModal : function( panel ) {
 
-			var box,
-				self = this,
+			var self = this,
 				modalLayer = self._modalLayer;
 
 			modalLayer.show();
-
 			panel.el.addClass('modal');
-			
-			box = panel.el.offset();
+			self._center( panel );
+			panel.el.css('z-index', modalLayer.css('z-index')+1);
+		},
 
+		_center : function( panel ) {
+			var box = panel.el.offset();
 			panel.el.css({
-				'z-index' : modalLayer.css('z-index')+1,
 				left : '50%',
 				top : '50%',
 				'margin-left' : -box.width/2,
 				'margin-top' : -box.height/2,
 			});
+		},
+
+		_updateBounds : function() {
 
 		},
 
@@ -169,8 +181,8 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 		},
 
 		_boundsContain : function( x, y, width, height ) {
-			var bounds = this._bounds; //Fix this shit
-			return true;//x >= bounds.left && y >= bounds.top && x+width <= bounds.right && y+height <= bounds.bottom;
+			var bounds = this._bounds;
+			return x >= bounds.left && y >= bounds.top && x+width <= bounds.right && y+height <= bounds.bottom;
 		},
 
 		_findPanelByElement : function( el ) {

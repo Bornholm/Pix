@@ -38,23 +38,23 @@ define( [ "libs/classy", "libs/zepto.min" ], function( Class ) {
 			return this.el.data('panel-id');
 		},
 
-		content : function( content ) {
+		content : function( newContent ) {
 			var self = this,
 				content =  self.el.find('.ui-panel-content');
 			if(arguments.length === 0) {
 				return content;
 			} else {
-				content.html( content );
+				content.html( newContent );
 			}
 		},
 
-		title : function( title ) {
+		title : function( newTitle ) {
 			var self = this,
 				title =  self.el.find('.ui-panel-title');
 			if(arguments.length === 0) {
 				return title;
 			} else {
-				title.html( title );
+				title.html( newTitle );
 			}
 		}
 

@@ -17,6 +17,7 @@ define( [ "yajf/module", "libs/zepto.min" ], function( Module ) {
 			events.subscribe('menu:item:click', self._onMenuItemClick, self);
 			events.subscribe('tools:register', self._onToolRegister, self);
 			events.subscribe('tools:unregister', self._onToolUnregister, self);
+			events.subscribe('project:new', self._showToolsBox, self);
 		},
 
 		_onMenuItemClick : function( menuItem ) {
@@ -26,12 +27,15 @@ define( [ "yajf/module", "libs/zepto.min" ], function( Module ) {
 		},
 
 		_showToolsBox : function() {
-
 			var self = this,
 				panels = self.sandbox.panelsManager;
-			self._panel && panels.removePanel( self._panel );
-			self._panel = panels.addPanel( self._getToolsView(), "Toolbox", true);
-			self._initDOMListeners( self._panel.el );
+			if ( self._panel ) {
+				panels.restore( self._panel );
+				self._updateToolsView();
+			} else {
+				self._panel = panels.create( self._getToolsView(), "Toolbox", true);
+				self._initDOMListeners( self._panel.el );
+			}
 		},
 
 		_getToolsView : function() {

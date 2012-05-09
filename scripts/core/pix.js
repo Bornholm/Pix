@@ -75,7 +75,7 @@ define( [
 					{ 
 						label : 'View',
 						items : [
-							{ label : 'Tools', id : 'toolset'  }
+							{ label : 'Show Tools', id : 'toolset'  }
 						]
 					}
 

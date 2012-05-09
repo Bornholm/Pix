@@ -50,6 +50,7 @@ define(['modules/toolbase'], function( ToolBase ) {
 				coords = project.globalToLocal( evt.clientX, evt.clientY );
 				project.pixel( coords.x, coords.y );
 			}
+
 			return false;
 		},
 
