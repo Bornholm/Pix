@@ -24,6 +24,10 @@ define(['libs/classy'], function( Class ) {
 
 		getContext : function() {
 			return this._context;
+		},
+
+		getCanvas : function() {
+			return this._canvas;
 		}
 
 	});
@@ -42,6 +46,7 @@ define(['libs/classy'], function( Class ) {
 			self._layers = [];
 			self._activeLayerIndex = 0;
 			self._color = '#FF000000';
+			self._zoom = 1;
 
 			self._initContainer();
 			self.newLayer();
@@ -65,6 +70,10 @@ define(['libs/classy'], function( Class ) {
 
 		setActiveLayerByIndex : function( index ) {
 			this._activeLayerIndex = index;
+		},
+
+		getLayers : function() {
+			return this._layers;
 		},
 
 		_initContainer : function() {
@@ -123,6 +132,48 @@ define(['libs/classy'], function( Class ) {
 				context.fillStyle = self._color;
 				context.fillRect( x, y, 1, 1 );
 			}
+		},
+
+		width : function( w ) {
+			var self = this;
+			if( arguments.length === 0 ) {
+				return self._width;
+			} else {
+				 self._width = w;
+				 self._updateWidth();
+			}
+		},
+
+		_updateWidth : function() {
+			
+		},
+
+		height : function( h ) {
+			var self = this;
+			if( arguments.length === 0 ) {
+				return self._height;
+			} else {
+				 self._height = h;
+				 self._updatHeight();
+			}
+		},
+
+		_updateHeight : function() {
+
+		},
+
+		zoom : function( z ) {
+			var self = this;
+			if( arguments.length === 0 ) {
+				return self._zoom;
+			} else {
+				self._zoom = z;
+				self._updateZoom();
+			}
+		},
+
+		_updateZoom : function() {
+
 		}
 
 	});

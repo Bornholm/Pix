@@ -1,16 +1,23 @@
 define( [
 			'yajf/core', 
+
+			// Main Menu
 			'modules/menu',
 			'modules/projectsmanager',
+			'modules/export',
+
+			// Tools
 			'modules/tools',
-			'modules/pencil',
+			'modules/tools/pencil',
+
+			// Extensions
 			"extensions/pubsub",
 			"extensions/panelmanager",
 			"extensions/template" 
 		], 
 	function( Core, 
-			MenuMod, ProjectsManMod, ToolsMod,
-			PencilMod,
+			MenuMod, ProjectsManMod, ExportMod,
+			ToolsMod, PencilMod,
 			PubSubExt, PanManExt, TemplateExt ) {
 
 	var Pix = Core.$extend({
@@ -32,6 +39,7 @@ define( [
 
 			self.registerModule( 'menu', MenuMod );
 			self.registerModule( 'projects', ProjectsManMod );
+			self.registerModule( 'export', ExportMod );
 
 			// Tools
 			self.registerModule( 'tools', ToolsMod );
@@ -69,7 +77,7 @@ define( [
 							{ label : 'New', id : "create-new" },
 							{ label : 'Open', disabled : true },
 							{ label : 'Save', disabled : true  },
-							{ label : 'Export', disabled : true  }
+							{ label : 'Export to PNG', id : 'export'  }
 						]
 					},
 					{ 
@@ -82,8 +90,11 @@ define( [
 				]
 			});
 
+			// Starting Main Menu Handlers
 			self.startModule( 'projects' );
+			self.startModule( 'export' );
 
+			// Starting Tools Modules
 			self.startModule( 'tools' );
 			self.startModule( 'pencil' );
 

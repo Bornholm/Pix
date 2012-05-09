@@ -1,4 +1,4 @@
-define(['modules/toolbase'], function( ToolBase ) {
+define(['modules/tools/toolbase'], function( ToolBase ) {
 	
 	var Pen = ToolBase.$extend({
 
