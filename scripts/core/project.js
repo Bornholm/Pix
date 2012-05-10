@@ -1,5 +1,7 @@
 define(['libs/classy'], function( Class ) {
 
+	"use strict";
+
 	var Layer = Class.$extend({
 
 		__init__ : function( width, height ) {
@@ -28,6 +30,10 @@ define(['libs/classy'], function( Class ) {
 
 		getCanvas : function() {
 			return this._canvas;
+		},
+
+		applyZoom : function() {
+
 		}
 
 	});
@@ -45,11 +51,12 @@ define(['libs/classy'], function( Class ) {
 
 			self._layers = [];
 			self._activeLayerIndex = 0;
-			self._color = '#FF000000';
-			self._zoom = 1;
 
 			self._initContainer();
 			self.newLayer();
+
+			self.color('#FF000000');
+			self.zoom(1);
 		},
 
 		newLayer : function() {
@@ -123,15 +130,103 @@ define(['libs/classy'], function( Class ) {
 			}
 		},
 
-		pixel : function( x, y ) {
+		_updateColor : function() {
+
 			var self = this,
-				context = self.getActiveLayer().getContext();
-			if( arguments.length === 0 ) {
-				
-			} else {
-				context.fillStyle = self._color;
-				context.fillRect( x, y, 1, 1 );
+				color = self._color,
+				layers = self.getLayers(),
+				len = layers.length;
+
+			while(len--) {
+				layers[len].getContext().fillStyle = color;
 			}
+
+		},
+
+		setPixel : function( x, y ) {
+			var self = this,
+				zoom = self.zoom(),
+				context = self.getActiveLayer().getContext();
+			context.fillRect( x, y, zoom, zoom );
+		},
+
+		line : function( x, y, x2, y2 ) { // From https://github.com/skyboy/AS3-Utilities/blob/master/skyboy/utils/efla.as
+			
+			var id, inc, multDiff,
+				i = 0,
+				self = this,
+				shortLen = y2 - y,
+				longLen = x2 - x;
+
+			if (!longLen) if(!shortLen) return;
+
+			// TODO: check for this above, swap x/y/len and optimize loops to ++ and -- (operators twice as fast, still only 2 loops)
+			if ( (shortLen ^ (shortLen >> 31)) - (shortLen >> 31) > (longLen ^ (longLen >> 31)) - (longLen >> 31)) {
+				if (shortLen < 0) {
+					inc = -1;
+					id = -shortLen % 4;
+				} else {
+					inc = 1;
+					id = shortLen % 4;
+				}
+				multDiff = !shortLen ? longLen : longLen / shortLen;
+
+				if (id) {
+					self.setPixel(x, y);
+					i += inc;
+					if (--id) {
+						self.setPixel(x + i * multDiff, y + i);
+						i += inc;
+						if (--id) {
+							self.setPixel(x + i * multDiff, y + i);
+							i += inc;
+						}
+					}
+				}
+				while (i != shortLen) {
+					self.setPixel(x + i * multDiff, y + i);
+					i += inc;
+					self.setPixel(x + i * multDiff, y + i);
+					i += inc;
+					self.setPixel(x + i * multDiff, y + i);
+					i += inc;
+					self.setPixel(x + i * multDiff, y + i);
+					i += inc;
+				}
+			} else {
+				if (longLen < 0) {
+					inc = -1;
+					id = -longLen % 4;
+				} else {
+					inc = 1;
+					id = longLen % 4;
+				}
+				multDiff = !longLen ? shortLen : shortLen / longLen;
+
+				if (id) {
+					self.setPixel(x, y);
+					i += inc;
+					if (--id) {
+						self.setPixel(x + i, y + i * multDiff);
+						i += inc;
+						if (--id) {
+							self.setPixel(x + i, y + i * multDiff);
+							i += inc;
+						}
+					}
+				}
+				while (i != longLen) {
+					self.setPixel(x + i, y + i * multDiff);
+					i += inc;
+					self.setPixel(x + i, y + i * multDiff);
+					i += inc;
+					self.setPixel(x + i, y + i * multDiff);
+					i += inc;
+					self.setPixel(x + i, y + i * multDiff);
+					i += inc;
+				}
+			}
+
 		},
 
 		width : function( w ) {
@@ -145,7 +240,15 @@ define(['libs/classy'], function( Class ) {
 		},
 
 		_updateWidth : function() {
-			
+				
+			var self = this,
+				width = self._width,
+				layers = self.getLayers(),
+				len = layers.length;
+
+			while(len--) {
+				layers[len].getCanvas().width = width;
+			}
 		},
 
 		height : function( h ) {
@@ -159,6 +262,15 @@ define(['libs/classy'], function( Class ) {
 		},
 
 		_updateHeight : function() {
+
+			var self = this,
+				height = self._height,
+				layers = self.getLayers(),
+				len = layers.length;
+
+			while(len--) {
+				layers[len].getCanvas().height = height;
+			}
 
 		},
 
@@ -174,6 +286,14 @@ define(['libs/classy'], function( Class ) {
 
 		_updateZoom : function() {
 
+			var self = this,
+				zoom = self._zoom,
+				layers = self.getLayers(),
+				len = layers.length;
+
+			while(len--) {
+				layers[len].applyZoom( zoom );
+			}
 		}
 
 	});
