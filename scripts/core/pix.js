@@ -5,10 +5,12 @@ define( [
 			'modules/menu',
 			'modules/projectsmanager',
 			'modules/export',
+			'modules/preview',
 
 			// Tools
 			'modules/tools',
 			'modules/tools/pencil',
+			'modules/tools/zoom',
 
 			// Extensions
 			"extensions/pubsub",
@@ -16,8 +18,8 @@ define( [
 			"extensions/template" 
 		], 
 	function( Core, 
-			MenuMod, ProjectsManMod, ExportMod,
-			ToolsMod, PencilMod,
+			MenuMod, ProjectsManMod, ExportMod, PreviewMod,
+			ToolsMod, PencilMod, ZoomMod,
 			PubSubExt, PanManExt, TemplateExt ) {
 
 	var Pix = Core.$extend({
@@ -40,10 +42,12 @@ define( [
 			self.registerModule( 'menu', MenuMod );
 			self.registerModule( 'projects', ProjectsManMod );
 			self.registerModule( 'export', ExportMod );
+			self.registerModule( 'preview', PreviewMod );
 
 			// Tools
 			self.registerModule( 'tools', ToolsMod );
 			self.registerModule( 'pencil', PencilMod );
+			self.registerModule( 'zoom', ZoomMod );
 
 		},
 
@@ -57,7 +61,7 @@ define( [
 					left : 0,
 					top : 27,
 					right : $(window).width(),
-					bottom : $(window).height()
+					bottom : Number.MAX_VALUE
 				}
 			});
 			self.registerExtension( 'template', TemplateExt );
@@ -83,7 +87,8 @@ define( [
 					{ 
 						label : 'View',
 						items : [
-							{ label : 'Show Tools', id : 'toolset'  }
+							{ label : 'Show Tools', id : 'toolset'  },
+							{ label : 'Show Preview', id : 'preview'  }
 						]
 					}
 
@@ -93,10 +98,12 @@ define( [
 			// Starting Main Menu Handlers
 			self.startModule( 'projects' );
 			self.startModule( 'export' );
+			self.startModule( 'preview' );
 
 			// Starting Tools Modules
 			self.startModule( 'tools' );
 			self.startModule( 'pencil' );
+			self.startModule( 'zoom' );
 
 		}
 

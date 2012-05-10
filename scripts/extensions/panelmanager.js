@@ -77,6 +77,8 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 			isDraggable && panel.el.addClass("draggable");
 			isModal && self._setModal( panel );
 
+			self._setFocus( panel );
+
 			events.publish("panel:focus", [ panel ] );
 
 			return panel;
@@ -115,7 +117,7 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 			//Dragging
 			container.on({
 				'mousedown' : self._onStartDrag.bind( self ),
-			}, ".ui-panel-title");
+			}, ".ui-panel-title" );
 
 			$(document).on({
 				'mousemove' :  self._onPanelDragging.bind( self ),
@@ -125,16 +127,24 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 			// Focus
 			container.on({
 				'mousedown' : self._onFocus.bind( self )
-			}, ".ui-panel");
+			}, ".ui-panel" );
 
 		},
 
 		_onFocus : function( evt ) {
 			var self = this,
-				target = $(evt.currentTarget),
+				target = $(evt.currentTarget);
+			self._setFocus ( self._findPanelByElement( target ) );
+		},
+
+		_setFocus : function( panel ) {
+
+			var self = this,
 				events = self.sandbox.events;
-			self._container.append( target );
-			events.publish("panel:focus", [ self._findPanelByElement( target ) ] );
+			self._container.find('.ui-panel').removeClass('active');
+			self._container.append( panel.el );
+			panel.el.addClass('active');
+			events.publish("panel:focus", [ panel ] );
 		},
 
 		_onStartDrag : function( evt ) {
@@ -174,9 +184,10 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 				self._previousMousePos = prevPos = prevPos || {};
 				prevPos.x = evt.screenX;
 				prevPos.y = evt.screenY;
-
-				return false;
+				
 			}
+
+			return false;
 
 		},
 

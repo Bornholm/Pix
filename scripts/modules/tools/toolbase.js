@@ -10,7 +10,6 @@ define(['yajf/module'], function( Module ) {
 
 		start : function( opts ) {
 			var self = this;
-
 			self._isActive = false;
 			self._registerTool();
 			self._initModulesEventsHandlers();
@@ -32,8 +31,8 @@ define(['yajf/module'], function( Module ) {
 
 		_onActiveProjectChange : function( project ) {
 			var self = this;
-			self._activeProject = project;
 			self.deactivate();
+			self._activeProject = project;
 			self._isActive && self.activate();
 		},
 

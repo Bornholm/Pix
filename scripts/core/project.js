@@ -5,149 +5,42 @@ define(['libs/classy'], function( Class ) {
 	var Layer = Class.$extend({
 
 		__init__ : function( width, height ) {
+
+			this._zoom = 1;
 			this._initCanvas( width, height );
 		},
 
 		_initCanvas : function( width, height ) {
+
 			var canvas, context,
+				zCanvas, zContext,
 				self = this;
 
 			canvas = document.createElement('canvas');
 			canvas.width = width;
 			canvas.height = height;
 
+			zCanvas = document.createElement('canvas');
+			zCanvas.width = width;
+			zCanvas.height = height;
+
 			self._canvas = canvas;
 			self._context = canvas.getContext('2d');
-		},
+			self._zCanvas = zCanvas;
+			self._zContext = zCanvas.getContext('2d');
 
-		getElement : function() {
-			return this._canvas;
-		},
-
-		getContext : function() {
-			return this._context;
-		},
-
-		getCanvas : function() {
-			return this._canvas;
-		},
-
-		applyZoom : function() {
-
-		}
-
-	});
-	
-	var Project = Class.$extend({
-
-		__init__ : function( opts ) {
-			
-			var self = this;
-
-			opts = opts || {};
-
-			self._width =  opts.width || 640;
-			self._height =  opts.height || 480;
-
-			self._layers = [];
-			self._activeLayerIndex = 0;
-
-			self._initContainer();
-			self.newLayer();
-
-			self.color('#FF000000');
-			self.zoom(1);
-		},
-
-		newLayer : function() {
-			var self = this,
-				layers = self._layers;
-			layers.push( new Layer( self._width, self._height ) );
-			self.setActiveLayerByIndex( layers.length -1 );
-			self._updateMainView();
-		},
-
-		getActiveLayerIndex : function() {
-			return this._activeLayerIndex;
-		},
-
-		getActiveLayer : function() {
-			return this._layers[ this._activeLayerIndex ];
-		},
-
-		setActiveLayerByIndex : function( index ) {
-			this._activeLayerIndex = index;
-		},
-
-		getLayers : function() {
-			return this._layers;
-		},
-
-		_initContainer : function() {
-			this._container = $('<div />').addClass('project-layers');
-			this._updateMainView();
-		},
-
-		getMainView : function() {
-			return this._container;
-		},
-
-		_updateMainView : function() {
-
-			var self = this,
-				layers = self._layers,
-				len = layers.length,
-				container = self._container;
-
-			container.empty();
-			while(len--) {
-				container.prepend( layers[len].getElement() );
-			}
-		},
-
-		globalToLocal : function( globalX, globalY ) {
-
-			var self = this,
-				offset = self._container.offset(),
-				coords = {};
-
-			coords.x = globalX + document.body.scrollLeft + document.documentElement.scrollLeft; 
-			coords.y = globalY + document.body.scrollTop + document.documentElement.scrollTop; 
-			coords.x -= offset.left;
-			coords.y -= offset.top;
-
-			return coords;
-		},
-
-		// Drawing methods
-
-		color : function( color ) {
-			var self = this;
-			if( arguments.length === 0 ) {
-				return self._color;
-			} else {
-				self._color = color;
-			}
-		},
-
-		_updateColor : function() {
-
-			var self = this,
-				color = self._color,
-				layers = self.getLayers(),
-				len = layers.length;
-
-			while(len--) {
-				layers[len].getContext().fillStyle = color;
-			}
-
+			self.clear();
 		},
 
 		setPixel : function( x, y ) {
 			var self = this,
-				zoom = self.zoom(),
-				context = self.getActiveLayer().getContext();
-			context.fillRect( x, y, zoom, zoom );
+				zoom = self._zoom,
+				context = self.getContext(),
+				zContext = self.getContext( true );
+			x = Math.floor(x/zoom);
+			y = Math.floor(y/zoom);
+			context.fillRect( x, y, 1, 1 );
+			zContext.fillRect( x*zoom, y*zoom, zoom, zoom );
 		},
 
 		line : function( x, y, x2, y2 ) { // From https://github.com/skyboy/AS3-Utilities/blob/master/skyboy/utils/efla.as
@@ -229,6 +122,196 @@ define(['libs/classy'], function( Class ) {
 
 		},
 
+		getContext : function( zoomed ) {
+			return zoomed ? this._zContext : this._context;
+		},
+
+		getCanvas : function( zoomed ) {
+			return zoomed ? this._zCanvas : this._canvas;
+		},
+
+		clear : function() {
+
+			var self = this,
+				canvas = self.getCanvas(),
+				context = self.getContext(),
+				zCanvas = self.getCanvas( true ),
+				zContext = self.getContext( true );
+
+			context.clearRect( 0, 0, canvas.width, canvas.height );
+			zContext.clearRect( 0, 0, zCanvas.width, zCanvas.height );
+		},
+
+		applyZoom : function( zoom ) {
+
+			var data, i, j, delta,
+				r, g, b, a,
+				self = this,
+				canvas = self.getCanvas(),
+				zCanvas = self.getCanvas( true ),
+				width = canvas.width,
+				height = canvas.height,
+				context = self.getContext(),
+				zContext = self.getContext( true );
+
+			self._zoom = zoom;
+
+			zCanvas.width = width * zoom;
+			zCanvas.height = height * zoom;
+
+			data = context.getImageData(0, 0, width, height).data;
+
+			zContext.save();
+
+			for( i = 0; i < width; ++i ) {
+				for( j = 0; j < height; ++j ) {
+					delta = j*(width << 2) + (i << 2);
+					r = data[ delta ];
+					g = data[ delta + 1];
+					b = data[ delta + 2];
+					a = data[ delta + 3];
+					zContext.fillStyle = 'rgba('+r+','+g+','+b+','+a+')';
+					zContext.fillRect( i*zoom, j*zoom, zoom, zoom);
+				}
+			}
+
+			zContext.restore();
+
+		}
+
+	});
+	
+	var Project = Class.$extend({
+
+		__init__ : function( opts ) {
+			
+			var self = this;
+
+			opts = opts || {};
+
+			self._width =  opts.width || 640;
+			self._height =  opts.height || 480;
+
+			self._layers = [];
+			self._activeLayerIndex = 0;
+
+			self._initContainer();
+			self.newLayer();
+
+			self.color('#FF000000');
+			self.zoom(1);
+			
+		},
+
+		newLayer : function() {
+			var self = this,
+				layers = self._layers;
+			layers.push( new Layer( self._width, self._height ) );
+			self.setActiveLayerByIndex( layers.length -1 );
+			self._updateMainView();
+		},
+
+		getActiveLayerIndex : function() {
+			return this._activeLayerIndex;
+		},
+
+		getActiveLayer : function() {
+			return this._layers[ this._activeLayerIndex ];
+		},
+
+		setActiveLayerByIndex : function( index ) {
+			this._activeLayerIndex = index;
+		},
+
+		getLayers : function() {
+			return this._layers;
+		},
+
+		_initContainer : function() {
+			this._container = $('<div />').addClass('project-layers');
+			this._updateMainView();
+		},
+
+		getMainView : function() {
+			return this._container;
+		},
+
+		getPreview : function() {
+
+			var self = this,
+				container = $('<div />').addClass('project-layers'),
+				layers = self._layers,
+				len = layers.length;
+
+			container.empty();
+			while(len--) {
+				container.prepend( layers[len].getCanvas() );
+			}
+
+			return container;
+		},
+
+		_updateMainView : function() {
+
+			var self = this,
+				layers = self._layers,
+				len = layers.length,
+				container = self._container;
+
+			container.empty();
+			while(len--) {
+				container.prepend( layers[len].getCanvas( true ) );
+			}
+		},
+
+		globalToLocal : function( globalX, globalY ) {
+
+			var self = this,
+				offset = self._container.offset(),
+				coords = {};
+
+			coords.x = globalX + document.body.scrollLeft + document.documentElement.scrollLeft; 
+			coords.y = globalY + document.body.scrollTop + document.documentElement.scrollTop; 
+			coords.x -= offset.left;
+			coords.y -= offset.top;
+
+			return coords;
+		},
+
+		// Drawing methods
+
+		color : function( color ) {
+			var self = this;
+			if( arguments.length === 0 ) {
+				return self._color;
+			} else {
+				self._color = color;
+				self._updateColor();
+			}
+		},
+
+		_updateColor : function() {
+
+			var self = this,
+				color = self._color,
+				layers = self.getLayers(),
+				len = layers.length;
+
+			while(len--) {
+				layers[len].getContext().fillStyle = color;
+				layers[len].getContext(true).fillStyle = color;
+			}
+
+		},
+
+		setPixel : function( x, y ) {
+			this.getActiveLayer().setPixel( x, y );
+		},
+
+		line : function( x, y, x2, y2 ) {
+			this.getActiveLayer().line( x, y, x2, y2 );
+		},
+
 		width : function( w ) {
 			var self = this;
 			if( arguments.length === 0 ) {
@@ -281,6 +364,7 @@ define(['libs/classy'], function( Class ) {
 			} else {
 				self._zoom = z;
 				self._updateZoom();
+				self._updateMainView();
 			}
 		},
 
@@ -289,10 +373,12 @@ define(['libs/classy'], function( Class ) {
 			var self = this,
 				zoom = self._zoom,
 				layers = self.getLayers(),
+				width = self.width(),
+				height = self.height(),
 				len = layers.length;
 
 			while(len--) {
-				layers[len].applyZoom( zoom );
+				layers[len].applyZoom( zoom, width, height );
 			}
 		}
 

@@ -20,10 +20,7 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 		},
 
 		activate : function() {
-
-			var self = this,
-				project = self._activeProject;
-
+			var self = this;
 			$(document.body).on({
 				'mousedown' : self._onDrawingBinded,
 				'mousemove' : self._onDrawBinded,
@@ -32,9 +29,7 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 		},
 
 		deactivate : function() {
-			var self = this,
-				project = self._activeProject;
-			
+			var self = this;
 			$(document.body).off({
 				'mousedown' : self._onDrawingBinded,
 				'mousemove' : self._onDrawBinded,

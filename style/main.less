@@ -94,7 +94,12 @@ canvas {
 		left : 15px;
 		overflow: hidden;
 		border-radius : 3px;
+		opacity : 0.6;
 		.outShadow;
+
+		&.active {
+			opacity : 1;
+		}
 
 		.ui-panel-title {
 
@@ -113,7 +118,7 @@ canvas {
 
 		.ui-panel-content {
 			overflow: auto;
-			padding : 10px;
+			padding : 3px;
 		}
 	}
 }
@@ -216,6 +221,7 @@ canvas {
 	padding : 5px;
 	border : 1px solid #ccc;
 	border-radius : 3px;
+	margin: 2px;
 
 	&:hover {
 		background : #eee;
