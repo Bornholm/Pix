@@ -8,34 +8,25 @@ define( [ "yajf/module", "libs/zepto.min" ], function( Module ) {
 			var self = this;
 			opts = opts || {};
 			self._tools = {};
+			self._container = opts.container;
 			self._initEventsHandlers();
+			self._updateToolsView();
 		},
 
 		_initEventsHandlers : function() {
 			var self = this,
+				container = self._container,
 				events = self.sandbox.events;
-			events.subscribe('menu:item:click', self._onMenuItemClick, self);
+
+			// ModCom
 			events.subscribe('tools:register', self._onToolRegister, self);
 			events.subscribe('tools:unregister', self._onToolUnregister, self);
-			events.subscribe('project:new', self._showToolsBox, self);
-		},
 
-		_onMenuItemClick : function( menuItem ) {
-			if( menuItem.id === "toolset" ) {
-				this._showToolsBox();
-			}
-		},
+			//DOM
+			container.on({
+				click : self._onToolClick.bind( self )
+			}, '.ui-toolsbox-tool' );
 
-		_showToolsBox : function() {
-			var self = this,
-				panels = self.sandbox.panelsManager;
-			if ( self._panel ) {
-				panels.restore( self._panel );
-				self._updateToolsView();
-			} else {
-				self._panel = panels.create( self._getToolsView(), "Toolbox", true);
-				self._initDOMListeners( self._panel.el );
-			}
 		},
 
 		_getToolsView : function() {
@@ -62,14 +53,7 @@ define( [ "yajf/module", "libs/zepto.min" ], function( Module ) {
 		},
 
 		_updateToolsView : function() {
-			this._panel && this._panel.content( this._getToolsView() );
-		},
-
-		_initDOMListeners : function( container ) {
-			var self = this;
-			container.on({
-				click : self._onToolClick.bind( self )
-			}, '.ui-toolsbox-tool' );
+			this._container && this._container.html( this._getToolsView() );
 		},
 
 		_onToolClick : function( evt ) {
@@ -80,11 +64,11 @@ define( [ "yajf/module", "libs/zepto.min" ], function( Module ) {
 				id = target.data('tool-id');
 
 			if( id ) {
-				self._panel.el.find('.ui-toolsbox-tool').removeClass('selected');
+				self._container.find('.ui-toolsbox-tool').removeClass('selected');
 				target.addClass('selected');
 				events.publish('tools:select', [ id ]);
 			}
-
+			
 		},
 
 		_onToolRegister : function( id, label, icon ) {
@@ -100,7 +84,7 @@ define( [ "yajf/module", "libs/zepto.min" ], function( Module ) {
 			var self = this;
 			delete self._tools[ id ];
 			self._updateToolsView();
-		},
+		}
 
 
 	});

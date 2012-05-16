@@ -74,9 +74,10 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 			self._container.append( panel.el );
 			self._panels.push( panel );
 
-			isDraggable && panel.el.addClass("draggable");
+			isDraggable && panel.el.addClass( 'draggable' );
 			isModal && self._setModal( panel );
 
+			self._restore( panel );
 			self._setFocus( panel );
 
 			events.publish("panel:focus", [ panel ] );
@@ -105,23 +106,19 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 			});
 		},
 
-		_updateBounds : function() {
-
-		},
-
 		_initEventsHandlers : function() {
 
 			var self = this,
 				container = self._container;
 
-			//Dragging
+			//Drag & drop
 			container.on({
-				'mousedown' : self._onStartDrag.bind( self ),
-			}, ".ui-panel-title" );
+				'mousedown' :  self._onStartDrag.bind( self ),
+			},'.ui-panel-title');
 
 			$(document).on({
-				'mousemove' :  self._onPanelDragging.bind( self ),
-				'mouseup' :  self._onStopDrag.bind( self )
+				'mouseup' :  self._onStopDrag.bind( self ),
+				'mousemove' :  self._onPanelDragging.bind( self )
 			});
 
 			// Focus
@@ -164,7 +161,7 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 
 		_onPanelDragging : function( evt ) {
 			
-			var pos, x, y,
+			var offset, x, y,
 				self = this,
 				prevPos = self._previousMousePos,
 				target = self._draggingTarget;
@@ -172,12 +169,20 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 			if( target ) {
 
 				if( prevPos && target.hasClass('draggable') ) {
-					pos = target.offset();
+					offset = target.offset();
 
-					y = pos.top+ (evt.screenY - prevPos.y);
-					x = pos.left+ (evt.screenX - prevPos.x);
+					y = offset.top + (evt.screenY - prevPos.y);
+					x = offset.left + (evt.screenX - prevPos.x);
 					
-					self._boundsContain( x, y, pos.width, pos.height ) && target.css({ top : y, left : x });
+					if ( self._boundsContain( x, y, offset.width, offset.height ) ) {
+
+						target.css({ 
+							top : y, 
+							left : x,
+							margin : '0px'
+						});		
+
+					}
 					
 				}
 
@@ -187,13 +192,11 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 				
 			}
 
-			return false;
-
 		},
 
 		_boundsContain : function( x, y, width, height ) {
 			var bounds = this._bounds;
-			return x >= bounds.left && y >= bounds.top && x+width <= bounds.right && y+height <= bounds.bottom;
+			return (x >= bounds.left) && (y >= bounds.top) && (x+width <= bounds.right) && (y+height <= bounds.bottom);
 		},
 
 		_findPanelByElement : function( el ) {

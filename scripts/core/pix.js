@@ -58,7 +58,7 @@ define( [
 				container : $('#workspace'),
 				modalLayer : $('#modal'),
 				bounds : {
-					left : 0,
+					left : 87,
 					top : 27,
 					right : $(window).width(),
 					bottom : Number.MAX_VALUE
@@ -87,7 +87,6 @@ define( [
 					{ 
 						label : 'View',
 						items : [
-							{ label : 'Show Tools', id : 'toolset'  },
 							{ label : 'Show Preview', id : 'preview'  }
 						]
 					}
@@ -101,7 +100,9 @@ define( [
 			self.startModule( 'preview' );
 
 			// Starting Tools Modules
-			self.startModule( 'tools' );
+			self.startModule( 'tools', {
+				container : $('#toolbox')
+			});
 			self.startModule( 'pencil' );
 			self.startModule( 'zoom' );
 
