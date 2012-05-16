@@ -11,6 +11,7 @@ define(['yajf/module'], function( Module ) {
 		start : function( opts ) {
 			var self = this;
 			self._isActive = false;
+			self._toolOptions = $('<div />');
 			self._registerTool();
 			self._initModulesEventsHandlers();
 		},
@@ -19,14 +20,14 @@ define(['yajf/module'], function( Module ) {
 			var self = this,
 				def = self._toolDefinition,
 				events = self.sandbox.events;
-			events.publish('tools:register', [ def.id, def.label, def.icon ] );
+			events.publish('toolbox:register', [ def.id, def.label, def.icon, self._toolOptions ] );
 		},
 
 		_initModulesEventsHandlers : function() {
 			var self = this,
 				events = self.sandbox.events;
 			events.subscribe('project:active', self._onActiveProjectChange.bind( self ) );
-			events.subscribe('tools:select', self._onToolSelected.bind( self ) );
+			events.subscribe('toolbox:select', self._onToolSelected.bind( self ) );
 		},
 
 		_onActiveProjectChange : function( project ) {

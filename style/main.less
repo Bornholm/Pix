@@ -54,8 +54,13 @@
     box-shadow:  0px 0px 3px 1px rgba(0, 0, 0, 0.1);
 }
 
-* {margin: 0; padding: 0;}
-html, body { height: 100%; }
+* {
+	.noMarginAndPadding;
+}
+
+html, body { 
+	height: 100%; 
+}
 
 body {
 	font-family : Helvetica, sans-serif;
@@ -138,6 +143,8 @@ canvas {
 
 		.ui-panel-content {
 			overflow: auto;
+			max-width : 490px;
+			max-height : 520px;
 			padding : 3px;
 		}
 	}
@@ -163,7 +170,7 @@ canvas {
 	background : @backgroundColor;
 
 	#logo {
-		margin: 0px 38px;
+		margin: 0px 30px;
 		font-weight : bold;
 		font-size : 14px;
 		line-height : @lineHeight;
@@ -237,6 +244,7 @@ canvas {
 }
 
 #toolbox {
+
 	position : absolute;
 	left: 0;
 	top: 0;
@@ -247,20 +255,42 @@ canvas {
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
+
+	#tools-options {
+		border-top: 1px solid #CCC;
+		text-align : center;
+		padding-top : 5px;
+	}
+
+	.ui-toolbox-tool {
+		.toggle-button;
+	}
 }
 
-.ui-toolsbox-tool {
+.zoom-button {
+	.toggle-button;
+	background : white;
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	font-weight: bold;
+	line-height: 10px;
+}
+
+.toggle-button {
 
 	padding : 5px;
 	border : 1px solid #ccc;
 	border-radius : 3px;
 	margin: 2px;
 
-	&:hover {
-		background : #eee;
-	}
-
 	&.selected {
 		.innerShadow;
 	}
+
+	&:hover {
+		cursor : pointer;
+		background : #eee;
+	}
 }
+

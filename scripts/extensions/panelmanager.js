@@ -180,7 +180,7 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 							top : y, 
 							left : x,
 							margin : '0px'
-						});		
+						});
 
 					}
 					

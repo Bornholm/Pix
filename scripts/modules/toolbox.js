@@ -8,24 +8,25 @@ define( [ "yajf/module", "libs/zepto.min" ], function( Module ) {
 			var self = this;
 			opts = opts || {};
 			self._tools = {};
-			self._container = opts.container;
+			self._buttonsContainer = opts.buttonsContainer;
+			self._optionsContainer = opts.optionsContainer;
 			self._initEventsHandlers();
 			self._updateToolsView();
 		},
 
 		_initEventsHandlers : function() {
 			var self = this,
-				container = self._container,
+				container = self._buttonsContainer,
 				events = self.sandbox.events;
 
 			// ModCom
-			events.subscribe('tools:register', self._onToolRegister, self);
-			events.subscribe('tools:unregister', self._onToolUnregister, self);
+			events.subscribe('toolbox:register', self._onToolRegister, self);
+			events.subscribe('toolbox:unregister', self._onToolUnregister, self);
 
 			//DOM
 			container.on({
 				click : self._onToolClick.bind( self )
-			}, '.ui-toolsbox-tool' );
+			}, '.ui-toolbox-tool' );
 
 		},
 
@@ -34,12 +35,12 @@ define( [ "yajf/module", "libs/zepto.min" ], function( Module ) {
 			var toolId, tool, img,
 				self = this,
 				tools = self._tools,
-				div = $('<div class="ui-toolsbox" />');
+				div = $('<div class="ui-toolbox" />');
 
 			for ( toolId in tools ) {
 				if( tools.hasOwnProperty(toolId) ) {
 					tool = tools[toolId];
-					img = $('<img class="ui-toolsbox-tool" />');
+					img = $('<img class="ui-toolbox-tool" />');
 					img.attr({
 						src : tool.icon || self._iconMissing,
 						title : tool.label || ''
@@ -53,7 +54,7 @@ define( [ "yajf/module", "libs/zepto.min" ], function( Module ) {
 		},
 
 		_updateToolsView : function() {
-			this._container && this._container.html( this._getToolsView() );
+			this._buttonsContainer && this._buttonsContainer.html( this._getToolsView() );
 		},
 
 		_onToolClick : function( evt ) {
@@ -61,21 +62,24 @@ define( [ "yajf/module", "libs/zepto.min" ], function( Module ) {
 			var self = this,
 				events = self.sandbox.events,
 				target = $(evt.currentTarget),
-				id = target.data('tool-id');
+				id = target.data('tool-id'),
+				tool = self._tools[ id ];
 
 			if( id ) {
-				self._container.find('.ui-toolsbox-tool').removeClass('selected');
+				self._buttonsContainer.find('.ui-toolbox-tool').removeClass('selected');
 				target.addClass('selected');
-				events.publish('tools:select', [ id ]);
+				self._optionsContainer.html( tool.options );
+				events.publish('toolbox:select', [ id ]);
 			}
 			
 		},
 
-		_onToolRegister : function( id, label, icon ) {
+		_onToolRegister : function( id, label, icon, options ) {
 			var self = this;
 			self._tools[ id ] = {
 				label : label,
-				icon : icon
+				icon : icon,
+				options : options
 			};
 			self._updateToolsView();
 		},

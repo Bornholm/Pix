@@ -8,7 +8,7 @@ define( [
 			'modules/preview',
 
 			// Tools
-			'modules/tools',
+			'modules/toolbox',
 			'modules/tools/pencil',
 			'modules/tools/zoom',
 
@@ -45,7 +45,7 @@ define( [
 			self.registerModule( 'preview', PreviewMod );
 
 			// Tools
-			self.registerModule( 'tools', ToolsMod );
+			self.registerModule( 'toolbox', ToolsMod );
 			self.registerModule( 'pencil', PencilMod );
 			self.registerModule( 'zoom', ZoomMod );
 
@@ -100,8 +100,9 @@ define( [
 			self.startModule( 'preview' );
 
 			// Starting Tools Modules
-			self.startModule( 'tools', {
-				container : $('#toolbox')
+			self.startModule( 'toolbox', {
+				buttonsContainer : $('#tools-buttons'),
+				optionsContainer : $('#tools-options')
 			});
 			self.startModule( 'pencil' );
 			self.startModule( 'zoom' );
