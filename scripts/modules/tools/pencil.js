@@ -9,14 +9,19 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 		},
 
 		start : function( opts ) {
-			var self = this;
+
+			var self = this,
+				events = self.sandbox.events;
+
 			self.$super( opts );
 
+			self._eraseMode = false;
 			self._isDrawing = false,
 			self._prevPos = {};
 			self._onDrawBinded = self._onDraw.bind( self );
 			self._offDrawingBinded = self._offDrawing.bind( self );
 			self._onDrawingBinded = self._onDrawing.bind( self );
+
 		},
 
 		activate : function() {
@@ -38,6 +43,7 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 		},
 
 		_onDraw : function( evt ) {
+			
 			var coords,
 				self = this,
 				prevPos = self._prevPos,
@@ -45,7 +51,7 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 
 			if( self._isDrawing ) {
 				coords = project.globalToLocal( evt.clientX, evt.clientY );
-				project.line( coords.x, coords.y, prevPos.x, prevPos.y );
+				project.line( coords.x, coords.y, prevPos.x, prevPos.y, self._eraseMode );
 				prevPos.x = coords.x;
 				prevPos.y = coords.y;
 			}

@@ -11,6 +11,7 @@ define( [
 			'modules/toolbox',
 			'modules/tools/pencil',
 			'modules/tools/zoom',
+			'modules/tools/eraser',
 
 			// Extensions
 			"extensions/pubsub",
@@ -19,7 +20,7 @@ define( [
 		], 
 	function( Core, 
 			MenuMod, ProjectsManMod, ExportMod, PreviewMod,
-			ToolsMod, PencilMod, ZoomMod,
+			ToolsMod, PencilMod, ZoomMod, EraserMod,
 			PubSubExt, PanManExt, TemplateExt ) {
 
 	var Pix = Core.$extend({
@@ -47,6 +48,7 @@ define( [
 			// Tools
 			self.registerModule( 'toolbox', ToolsMod );
 			self.registerModule( 'pencil', PencilMod );
+			self.registerModule( 'eraser', EraserMod );
 			self.registerModule( 'zoom', ZoomMod );
 
 		},
@@ -105,6 +107,7 @@ define( [
 				optionsContainer : $('#tools-options')
 			});
 			self.startModule( 'pencil' );
+			self.startModule( 'eraser' );
 			self.startModule( 'zoom' );
 
 		}

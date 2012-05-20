@@ -32,18 +32,18 @@ define(['libs/classy'], function( Class ) {
 			self.clear();
 		},
 
-		setPixel : function( x, y ) {
+		setPixel : function( x, y, clear ) {
 			var self = this,
 				zoom = self._zoom,
 				context = self.getContext(),
 				zContext = self.getContext( true );
 			x = Math.floor(x/zoom);
 			y = Math.floor(y/zoom);
-			context.fillRect( x, y, 1, 1 );
-			zContext.fillRect( x*zoom, y*zoom, zoom, zoom );
+			context[clear ?  'clearRect' : 'fillRect' ]( x, y, 1, 1 );
+			zContext[clear ?  'clearRect' : 'fillRect' ]( x*zoom, y*zoom, zoom, zoom );
 		},
 
-		line : function( x, y, x2, y2 ) { // From https://github.com/skyboy/AS3-Utilities/blob/master/skyboy/utils/efla.as
+		line : function( x, y, x2, y2, clear ) { // From https://github.com/skyboy/AS3-Utilities/blob/master/skyboy/utils/efla.as
 			
 			var id, inc, multDiff,
 				i = 0,
@@ -65,25 +65,25 @@ define(['libs/classy'], function( Class ) {
 				multDiff = !shortLen ? longLen : longLen / shortLen;
 
 				if (id) {
-					self.setPixel(x, y);
+					self.setPixel(x, y, clear);
 					i += inc;
 					if (--id) {
-						self.setPixel(x + i * multDiff, y + i);
+						self.setPixel(x + i * multDiff, y + i, clear);
 						i += inc;
 						if (--id) {
-							self.setPixel(x + i * multDiff, y + i);
+							self.setPixel(x + i * multDiff, y + i, clear);
 							i += inc;
 						}
 					}
 				}
 				while (i != shortLen) {
-					self.setPixel(x + i * multDiff, y + i);
+					self.setPixel(x + i * multDiff, y + i, clear);
 					i += inc;
-					self.setPixel(x + i * multDiff, y + i);
+					self.setPixel(x + i * multDiff, y + i, clear);
 					i += inc;
-					self.setPixel(x + i * multDiff, y + i);
+					self.setPixel(x + i * multDiff, y + i, clear);
 					i += inc;
-					self.setPixel(x + i * multDiff, y + i);
+					self.setPixel(x + i * multDiff, y + i, clear);
 					i += inc;
 				}
 			} else {
@@ -97,25 +97,25 @@ define(['libs/classy'], function( Class ) {
 				multDiff = !longLen ? shortLen : shortLen / longLen;
 
 				if (id) {
-					self.setPixel(x, y);
+					self.setPixel(x, y, clear);
 					i += inc;
 					if (--id) {
-						self.setPixel(x + i, y + i * multDiff);
+						self.setPixel(x + i, y + i * multDiff, clear);
 						i += inc;
 						if (--id) {
-							self.setPixel(x + i, y + i * multDiff);
+							self.setPixel(x + i, y + i * multDiff, clear);
 							i += inc;
 						}
 					}
 				}
 				while (i != longLen) {
-					self.setPixel(x + i, y + i * multDiff);
+					self.setPixel(x + i, y + i * multDiff, clear);
 					i += inc;
-					self.setPixel(x + i, y + i * multDiff);
+					self.setPixel(x + i, y + i * multDiff, clear);
 					i += inc;
-					self.setPixel(x + i, y + i * multDiff);
+					self.setPixel(x + i, y + i * multDiff, clear);
 					i += inc;
-					self.setPixel(x + i, y + i * multDiff);
+					self.setPixel(x + i, y + i * multDiff, clear);
 					i += inc;
 				}
 			}
@@ -264,6 +264,26 @@ define(['libs/classy'], function( Class ) {
 			}
 		},
 
+		_updateBackground : function() {
+			var self = this,
+				zoom = self.zoom(),
+				canvas = self._background || document.createElement('canvas'),
+				context = canvas.getContext('2d');
+
+			canvas.height = canvas.width = zoom *2;
+
+			context.fillStyle = '#fff';
+			context.fillRect( 0, 0, zoom*2, zoom*2 );
+			
+			context.fillStyle = '#ccc';
+			context.fillRect( 0, 0, zoom, zoom );
+			context.fillRect( zoom, zoom, zoom, zoom );
+
+			self._container.find('canvas').css('background-image', 'none');
+			self._container.find('canvas').first().css('background-image', 'url("'+canvas.toDataURL()+'")');
+			self._background = canvas;
+		},
+
 		globalToLocal : function( globalX, globalY ) {
 
 			var self = this,
@@ -308,8 +328,8 @@ define(['libs/classy'], function( Class ) {
 			this.getActiveLayer().setPixel( x, y );
 		},
 
-		line : function( x, y, x2, y2 ) {
-			this.getActiveLayer().line( x, y, x2, y2 );
+		line : function( x, y, x2, y2, eraseMode ) {
+			this.getActiveLayer().line( x, y, x2, y2, eraseMode );
 		},
 
 		width : function( w ) {
@@ -380,6 +400,8 @@ define(['libs/classy'], function( Class ) {
 			while(len--) {
 				layers[len].applyZoom( zoom, width, height );
 			}
+
+			self._updateBackground();
 		}
 
 	});

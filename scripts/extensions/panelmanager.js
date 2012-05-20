@@ -148,7 +148,6 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 			var self = this,
 				target = $(evt.currentTarget).parent(".ui-panel");
 			self._draggingTarget = target;
-			return false;
 		},
 
 
@@ -156,7 +155,6 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 			var self = this;
 			self._draggingTarget = null;
 			self._previousMousePos = null;
-			return false;
 		},
 
 		_onPanelDragging : function( evt ) {
@@ -189,6 +187,8 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 				self._previousMousePos = prevPos = prevPos || {};
 				prevPos.x = evt.screenX;
 				prevPos.y = evt.screenY;
+
+				return false;
 				
 			}
 

@@ -16,6 +16,15 @@
 	text-align : right;
 }
 
+.noSelect {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
 .shadeGradient ( @baseColor ) {
 
 	@firstShadeRatio : 2%;
@@ -112,14 +121,6 @@ canvas {
 			opacity : 1;
 		}
 
-		// Disable text selection
-		-webkit-touch-callout: none;
-		-webkit-user-select: none;
-		-khtml-user-select: none;
-		-moz-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
-
 		-webkit-transition: opacity 0.5s ease;
 		-moz-transition: opacity 0.5s ease;
 		-ms-transition: opacity 0.5s ease;
@@ -139,6 +140,8 @@ canvas {
 				cursor : move;
 			}
 
+			.noSelect;
+
 		}
 
 		.ui-panel-content {
@@ -146,6 +149,8 @@ canvas {
 			max-width : 490px;
 			max-height : 520px;
 			padding : 3px;
+
+			.noSelect;
 		}
 	}
 }
