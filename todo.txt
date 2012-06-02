@@ -1,0 +1,11 @@
+Passage Project en Widget
+Chargement couleur projet actif
+Palette des couleurs utilisées
+Ctrl-Z
+Pipette
+Raccourcis clavier
+Sauvegarde/Chargement projet localStorage
+Zoom %
+Gestions des calques
+Maximize/Minimize Panel
+Styling CSS

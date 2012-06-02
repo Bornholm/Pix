@@ -6,12 +6,16 @@ define( [
 			'modules/projectsmanager',
 			'modules/export',
 			'modules/preview',
+			
 
 			// Tools
 			'modules/toolbox',
 			'modules/tools/pencil',
 			'modules/tools/zoom',
 			'modules/tools/eraser',
+
+			// Others
+			'modules/colors',
 
 			// Extensions
 			"extensions/pubsub",
@@ -21,6 +25,7 @@ define( [
 	function( Core, 
 			MenuMod, ProjectsManMod, ExportMod, PreviewMod,
 			ToolsMod, PencilMod, ZoomMod, EraserMod,
+			ColorsMod,
 			PubSubExt, PanManExt, TemplateExt ) {
 
 	var Pix = Core.$extend({
@@ -50,6 +55,9 @@ define( [
 			self.registerModule( 'pencil', PencilMod );
 			self.registerModule( 'eraser', EraserMod );
 			self.registerModule( 'zoom', ZoomMod );
+
+			// Others
+			self.registerModule( 'colors', ColorsMod );
 
 		},
 
@@ -96,6 +104,8 @@ define( [
 				]
 			});
 
+
+
 			// Starting Main Menu Handlers
 			self.startModule( 'projects' );
 			self.startModule( 'export' );
@@ -109,6 +119,11 @@ define( [
 			self.startModule( 'pencil' );
 			self.startModule( 'eraser' );
 			self.startModule( 'zoom' );
+
+			// Starting Others Modules
+			self.startModule( 'colors', {
+				container : $('#colors')
+			});
 
 		}
 

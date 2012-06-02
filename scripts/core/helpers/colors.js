@@ -4,6 +4,23 @@ define(function() {
 	
 	var ColorHelper = { // From http://mjijackson.com/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript
 
+		"RGB" : 0,
+		"RGBA" : 1,
+		"HSL" : 2,
+		"HSLA" : 3,
+		"HEXA" : 4,
+
+		getRGBString : function( r, g, b ) {
+			return 'rgb('+r+','+g+','+b+')';
+		},
+
+		getHSLString : function( h, s, l ) {
+			var h = 360*h,
+				s = ( (s*100) | 0 )+"%",
+				l = ( (l*100) | 0 )+"%";
+			return 'hsl('+h+','+s+','+l+')';
+		},
+
 		HSLToRGB : function( h, s, l ) {
 
 			var r, g, b;

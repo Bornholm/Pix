@@ -21,12 +21,14 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 			self._onDrawBinded = self._onDraw.bind( self );
 			self._offDrawingBinded = self._offDrawing.bind( self );
 			self._onDrawingBinded = self._onDrawing.bind( self );
+			self._onPixelClickBinded = self._onPixelClick.bind( self );
 
 		},
 
 		activate : function() {
 			var self = this;
 			$(document.body).on({
+				'click' : self._onPixelClickBinded,
 				'mousedown' : self._onDrawingBinded,
 				'mousemove' : self._onDrawBinded,
 				'mouseup' : self._offDrawingBinded
@@ -36,10 +38,22 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 		deactivate : function() {  
 			var self = this;
 			$(document.body).off({
+				'click' : self._onPixelClickBinded,
 				'mousedown' : self._onDrawingBinded,
 				'mousemove' : self._onDrawBinded,
 				'mouseup' : self._offDrawingBinded
 			}, '.project-layers');
+		},
+
+		_onPixelClick : function( evt ) {
+
+			var coords,
+				self = this,
+				project = self._activeProject;
+
+			coords = project.globalToLocal( evt.pageX, evt.pageY );
+			project.setPixel( coords.x, coords.y , self._eraseMode );
+
 		},
 
 		_onDraw : function( evt ) {
@@ -50,7 +64,7 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 				project = self._activeProject;
 
 			if( self._isDrawing ) {
-				coords = project.globalToLocal( evt.clientX, evt.clientY );
+				coords = project.globalToLocal( evt.pageX, evt.pageY );
 				project.line( coords.x, coords.y, prevPos.x, prevPos.y, self._eraseMode );
 				prevPos.x = coords.x;
 				prevPos.y = coords.y;

@@ -200,6 +200,7 @@ define(['libs/classy', 'core/asynctask'], function( Class, AsyncTask ) {
 			var self = this,
 				zContext = self.getContext( true );
 			zContext.putImageData( zImageData, 0, 0, 0, 0, zImageData.width, zImageData.height );
+			zContext.fillStyle = self.getContext().fillStyle;
 		}
 
 	});
@@ -307,16 +308,14 @@ define(['libs/classy', 'core/asynctask'], function( Class, AsyncTask ) {
 			self._background = canvas;
 		},
 
-		globalToLocal : function( globalX, globalY ) {
+		globalToLocal : function( pageX, pageY ) {
 
 			var self = this,
-				offset = self._container.offset(),
+				offset = $( self.getActiveLayer().getCanvas( true ) ).offset(),
 				coords = {};
 
-			coords.x = globalX + document.body.scrollLeft + document.documentElement.scrollLeft; 
-			coords.y = globalY + document.body.scrollTop + document.documentElement.scrollTop; 
-			coords.x -= offset.left;
-			coords.y -= offset.top;
+			coords.x = pageX - offset.left;
+			coords.y = pageY - offset.top;
 
 			return coords;
 		},
@@ -342,13 +341,13 @@ define(['libs/classy', 'core/asynctask'], function( Class, AsyncTask ) {
 
 			while(len--) {
 				layers[len].getContext().fillStyle = color;
-				layers[len].getContext(true).fillStyle = color;
+				layers[len].getContext( true ).fillStyle = color;
 			}
 
 		},
 
-		setPixel : function( x, y ) {
-			this.getActiveLayer().setPixel( x, y );
+		setPixel : function( x, y, eraseMode ) {
+			this.getActiveLayer().setPixel( x, y, eraseMode );
 		},
 
 		line : function( x, y, x2, y2, eraseMode ) {

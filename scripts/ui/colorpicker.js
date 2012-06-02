@@ -153,18 +153,13 @@ define(['ui/widget', 'core/helpers/colors'], function( Widget, ColorHelper ) {
 		},
 
 		toHSLString : function() {
-
-			var color = this.toHSL(),
-				h = 360*color.h,
-				s = ( (color.s*100) | 0 )+"%",
-				l = ( (color.l*100) | 0 )+"%";
-
-			return 'hsl('+h+','+s+','+l+')';
+			var color = this.toHSL();
+			return ColorHelper.getHSLString( color.h, color.s, color.l );
 		},
 
 		toRGBString : function() {
 			var color = this.toRGB();
-			return 'rgb('+color.r+','+color.g+','+color.b+')';
+			return ColorHelper.getRGBString( color.r, color.g, color.b );
 		},
 
 		toHSL : function() {
@@ -327,7 +322,7 @@ define(['ui/widget', 'core/helpers/colors'], function( Widget, ColorHelper ) {
 
 		_dispatchColorChange : function() {
 			var self = this;
-			self.$el.trigger( self.widgetClass+":change", [ self.toHSL(), self.toRGB() ] );
+			self.$el.trigger( self.widgetClass+":change", [ self.toHSLString(), self.toRGBString() ] );
 		}
 
 
