@@ -1,13 +1,43 @@
-define(['libs/classy'], function( Class ) {
+define(['libs/classy', 'core/asynctask'], function( Class, AsyncTask ) {
 
 	"use strict";
 
+	// Layers Async Methods
+
+	var asyncZoom = function( imageData, zImageData, zoom ) {
+
+		var i, j, delta,
+			zWidth = zImageData.width,
+			zHeight = zImageData.height,
+			width = imageData.width,
+			zArr = zImageData.data,
+			arr = imageData.data;
+			
+		for( i = 0; i < zWidth; ++i ) {
+			for( j = 0; j < zHeight; ++j ) {
+				zDelta = j*(zWidth << 2) + (i << 2);
+				delta = (j/zoom|0)*(width << 2) + ( (i/zoom|0) << 2);
+				zArr[ zDelta ] = arr[ delta ];
+				zArr[ zDelta + 1 ] = arr[ delta + 1];
+				zArr[ zDelta + 2 ] = arr[ delta + 2];
+				zArr[ zDelta + 3 ] = arr[ delta + 3];
+			}
+		};
+
+		return zImageData;
+	};
+
 	var Layer = Class.$extend({
+
+		_asyncZoomTask : new AsyncTask( asyncZoom ),
 
 		__init__ : function( width, height ) {
 
-			this._zoom = 1;
+			var self = this;
+
+			self._zoom = 1;
 			this._initCanvas( width, height );
+			self._onZoomCompleteBinded = self._onZoomComplete.bind( self );
 		},
 
 		_initCanvas : function( width, height ) {
@@ -37,8 +67,8 @@ define(['libs/classy'], function( Class ) {
 				zoom = self._zoom,
 				context = self.getContext(),
 				zContext = self.getContext( true );
-			x = Math.floor(x/zoom);
-			y = Math.floor(y/zoom);
+			x = x/zoom | 0; //  x | 0 == Math.floor(x)
+			y = y/zoom | 0;
 			context[clear ?  'clearRect' : 'fillRect' ]( x, y, 1, 1 );
 			zContext[clear ?  'clearRect' : 'fillRect' ]( x*zoom, y*zoom, zoom, zoom );
 		},
@@ -144,9 +174,10 @@ define(['libs/classy'], function( Class ) {
 
 		applyZoom : function( zoom ) {
 
-			var data, i, j, delta,
+			var data, zData, i, j, delta,
 				r, g, b, a,
 				self = this,
+				asyncZoom = self._asyncZoomTask,
 				canvas = self.getCanvas(),
 				zCanvas = self.getCanvas( true ),
 				width = canvas.width,
@@ -155,28 +186,20 @@ define(['libs/classy'], function( Class ) {
 				zContext = self.getContext( true );
 
 			self._zoom = zoom;
-
 			zCanvas.width = width * zoom;
 			zCanvas.height = height * zoom;
 
-			data = context.getImageData(0, 0, width, height).data;
+			data = context.getImageData(0, 0, width, height);
+			zData = zContext.getImageData(0, 0, width * zoom, height * zoom );
 
-			zContext.save();
+			asyncZoom.run( [ data, zData, zoom ], self._onZoomCompleteBinded );
 
-			for( i = 0; i < width; ++i ) {
-				for( j = 0; j < height; ++j ) {
-					delta = j*(width << 2) + (i << 2);
-					r = data[ delta ];
-					g = data[ delta + 1];
-					b = data[ delta + 2];
-					a = data[ delta + 3];
-					zContext.fillStyle = 'rgba('+r+','+g+','+b+','+a+')';
-					zContext.fillRect( i*zoom, j*zoom, zoom, zoom);
-				}
-			}
+		},
 
-			zContext.restore();
-
+		_onZoomComplete : function( zImageData ) {
+			var self = this,
+				zContext = self.getContext( true );
+			zContext.putImageData( zImageData, 0, 0, 0, 0, zImageData.width, zImageData.height );
 		}
 
 	});

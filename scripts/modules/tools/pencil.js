@@ -33,7 +33,7 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 			}, '.project-layers');
 		},
 
-		deactivate : function() {
+		deactivate : function() {  
 			var self = this;
 			$(document.body).off({
 				'mousedown' : self._onDrawingBinded,
@@ -43,7 +43,7 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 		},
 
 		_onDraw : function( evt ) {
-			
+
 			var coords,
 				self = this,
 				prevPos = self._prevPos,
@@ -73,7 +73,6 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 			self._onDraw( evt );
 			return false;
 		}
-
 
 
 	});

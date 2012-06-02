@@ -7,6 +7,12 @@
 
 @textColor : #555;
 
+.border-box {
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
 .noMarginAndPadding {
 	margin : 0;
 	padding : 0;
@@ -115,7 +121,6 @@ canvas {
 		overflow: hidden;
 		border-radius : 3px;
 		.outShadow;
-		opacity : 0.6;
 
 		&.active {
 			opacity : 1;
@@ -153,6 +158,10 @@ canvas {
 			.noSelect;
 		}
 	}
+}
+
+.project-layers {
+	text-align : center;
 }
 
 #top-bar {
@@ -248,7 +257,7 @@ canvas {
 	}
 }
 
-#toolbox {
+#left-tools {
 
 	position : absolute;
 	left: 0;
@@ -257,9 +266,8 @@ canvas {
 	height: 100%;
 	border-right : 1px solid #ccc;
 	padding: @topBarHeight + 10px 10px 0px 10px;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
+
+	.border-box;
 
 	#tools-options {
 		border-top: 1px solid #CCC;
@@ -270,6 +278,18 @@ canvas {
 	.ui-toolbox-tool {
 		.toggle-button;
 	}
+}
+
+#right-tools {
+	position : absolute;
+	right: 0;
+	top: 0;
+	width: 200px;
+	height: 100%;
+	border-left : 1px solid #ccc;
+	padding: @topBarHeight + 10px 10px 0px 10px;
+	.border-box;
+
 }
 
 .zoom-button {
@@ -299,3 +319,16 @@ canvas {
 	}
 }
 
+.ui-widget.colorpicker {
+
+	display: inline-block;
+	border-radius : 5px;
+	padding : 5px;
+	border : 1px solid #ccc;
+	.noSelect;
+
+	.color-map, .hue-map {
+		cursor : default;
+		margin : 0px 3px;
+	}
+}

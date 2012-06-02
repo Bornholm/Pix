@@ -6,7 +6,7 @@ define( [
 		], 
 		function( Module, Project, newProjectTemplate ) {
 
-	var New = Module.$extend({
+	var ProjectManager = Module.$extend({
 
 		start : function() {
 			var self = this;
@@ -120,5 +120,5 @@ define( [
 
 	});
 
-	return New;
+	return ProjectManager;
 });
