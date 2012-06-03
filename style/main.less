@@ -69,6 +69,12 @@
     box-shadow:  0px 0px 3px 1px rgba(0, 0, 0, 0.1);
 }
 
+@topBarHeight : 25px;
+
+/***************
+	Elements 
+****************/
+
 * {
 	.noMarginAndPadding;
 }
@@ -87,6 +93,10 @@ body {
 	font-size : 12px;
 }
 
+canvas {
+	border : 1px solid #ccc;
+}
+
 #modal {
 	background-color : rgba(0,0,0,0.3);
 	position: fixed;
@@ -97,12 +107,6 @@ body {
 	top : 0;
 	left : 0;
 }
-
-canvas {
-	border : 1px solid #ccc;
-}
-
-@topBarHeight : 25px;
 
 #workspace {
 
@@ -151,17 +155,11 @@ canvas {
 
 		.ui-panel-content {
 			overflow: auto;
-			max-width : 490px;
-			max-height : 520px;
 			padding : 3px;
 
 			.noSelect;
 		}
 	}
-}
-
-.project-layers {
-	text-align : center;
 }
 
 #top-bar {
@@ -281,7 +279,6 @@ canvas {
 }
 
 #right-tools {
-
 	position : absolute;
 	right: 0;
 	top: 0;
@@ -290,7 +287,17 @@ canvas {
 	border-left : 1px solid #ccc;
 	padding: @topBarHeight + 10px 10px 0px 10px;
 	.border-box;
+}
 
+#colors {
+	padding: 5px 0px;
+	border-bottom : 1px solid #ccc;
+	.current-color {
+		width : 60px;
+		height : 30px;
+		border : 1px solid #ccc;
+		border-radius : 3px;
+	}
 }
 
 .zoom-button {
@@ -320,12 +327,26 @@ canvas {
 	}
 }
 
+/********************
+	Widgets
+*********************/
+
+.ui-widget.pixel-canvas {
+
+	.layers {
+		text-align : center;
+	}
+}
+
 .ui-widget.colorpicker {
 
 	.noSelect;
 
 	.color-map, .hue-map {
 		cursor : default;
-		margin : 0px 3px;
+		margin-right : 5px;
+		border-radius : 3px;
 	}
 }
+
+

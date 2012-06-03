@@ -1,10 +1,10 @@
 define( [	
 			"yajf/module",
-			"core/project",
+			"core/pixelcanvas",
 			"libs/text!modules/templates/newproject.tpl",
 			"libs/zepto.min"
 		], 
-		function( Module, Project, newProjectTemplate ) {
+		function( Module, PixelCanvas, newProjectTemplate ) {
 
 	var ProjectManager = Module.$extend({
 
@@ -81,13 +81,13 @@ define( [
 				events = self.sandbox.events,
 				panman = self.sandbox.panelsManager;
 
-			project = new Project({
+			project = new PixelCanvas({
 				name : projectName,
 				width : width,
 				height : height
 			});
 
-			panel = panman.create( project.getMainView() , '<span>'+projectName+'</span>',  true );
+			panel = panman.create( project.el , '<span>'+projectName+'</span>',  true );
 
 			self._projects.push({
 				panel : panel,

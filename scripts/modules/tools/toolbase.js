@@ -54,6 +54,13 @@ define(['yajf/module'], function( Module ) {
 
 		deactivate : function() {
 			console.log( "Deactivate", this._toolDefinition.id );
+		},
+
+		publishToolUse : function() {
+			var self = this,
+				definition = self._toolDefinition,
+				events = self.sandbox.events;
+			events.publish('toolbox:use', [ definition.id, definition.label, definition.icon ]);
 		}
 
 

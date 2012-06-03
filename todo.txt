@@ -1,5 +1,4 @@
-Passage Project en Widget
-Chargement couleur projet actif
+x Passage Project en Widget
 Palette des couleurs utilisées
 Ctrl-Z
 Pipette
@@ -9,3 +8,4 @@ Zoom %
 Gestions des calques
 Maximize/Minimize Panel
 Styling CSS
+x Shifth -> Line

@@ -1,4 +1,4 @@
-define(['yajf/module', 'ui/colorpicker'], function( Module, ColorPicker ) {
+define(['yajf/module', 'ui/colorpicker', 'ui/colorpalette'], function( Module, ColorPicker, ColorPalette ) {
 
 	var ColorsModule = Module.$extend({
 
@@ -8,20 +8,29 @@ define(['yajf/module', 'ui/colorpicker'], function( Module, ColorPicker ) {
 
 			opts = opts || {};
 			self._container = opts.container;
+			self._colors = [];
 
-			self.render();
+			self._initView();
 			self._initEventsHandler();
+			self._updateCurrentColor();
 		},
 
-		render : function() {
+		_initView : function() {
 
 			var self = this,
 				container = self._container,
+				currentColor = $('<div />'),
+				palette = new ColorPalette(),
 				colorpicker = new ColorPicker();
 
+			self._currentColor = currentColor;
 			self._colorPicker = colorpicker;
 
+			currentColor.addClass('current-color');
+
 			container.append( colorpicker.el );
+			container.append( currentColor );
+			container.append( palette.el );
 		},
 
 		_initEventsHandler : function() {
@@ -30,35 +39,40 @@ define(['yajf/module', 'ui/colorpicker'], function( Module, ColorPicker ) {
 				events = self.sandbox.events;
 
 			events.subscribe('project:active', self._onActiveProjectChange.bind( self ) );
-
 			cp.$el.on('colorpicker:change', self._colorPickerChangeHandler.bind( self ) );
 		},
 
 		_colorPickerChangeHandler : function( evt, hslString ) {
-			var project = this._activeProject;
+			var self = this,
+				project = self._activeProject;
 			if( project ) {
 				project.color( hslString );
 			}
+			self._updateCurrentColor()
 		},
 
 		_onActiveProjectChange : function( project ) {
-			var self = this;
+			var self = this,
+				cp = self._colorPicker;
 			self._activeProject = project;
-			self._updateColorPickerColor();
+			project.color( cp.toHSLString() );
 		},
 
 		_updateColorPickerColor : function() {
 			var self = this,
 				cp = self._colorPicker,
 				project = self._activeProject;
+			cp.fromColorString( project.color() );
+			self._updateCurrentColor();
 		},
 
-		_updateProjectColor : function() {
+		_updateCurrentColor : function() {
 			var self = this,
 				cp = self._colorPicker,
-				project = self._activeProject;
-			project.color( cp.toHSLString() );
+				currentColor = self._currentColor;
+			currentColor.css( 'background-color', cp.toHSLString() );
 		}
+
 
 
 		

@@ -1,4 +1,4 @@
-define(['libs/classy', 'core/asynctask'], function( Class, AsyncTask ) {
+define(['libs/classy', 'ui/widget', 'core/asynctask'], function( Class, Widget, AsyncTask ) {
 
 	"use strict";
 
@@ -83,7 +83,6 @@ define(['libs/classy', 'core/asynctask'], function( Class, AsyncTask ) {
 
 			if (!longLen) if(!shortLen) return;
 
-			// TODO: check for this above, swap x/y/len and optimize loops to ++ and -- (operators twice as fast, still only 2 loops)
 			if ( (shortLen ^ (shortLen >> 31)) - (shortLen >> 31) > (longLen ^ (longLen >> 31)) - (longLen >> 31)) {
 				if (shortLen < 0) {
 					inc = -1;
@@ -205,11 +204,15 @@ define(['libs/classy', 'core/asynctask'], function( Class, AsyncTask ) {
 
 	});
 	
-	var Project = Class.$extend({
+	var PixelCanvas = Widget.$extend({
+
+		widgetClass : 'pixel-canvas',
 
 		__init__ : function( opts ) {
 			
 			var self = this;
+
+			self.$super();
 
 			opts = opts || {};
 
@@ -252,27 +255,12 @@ define(['libs/classy', 'core/asynctask'], function( Class, AsyncTask ) {
 		},
 
 		_initContainer : function() {
-			this._container = $('<div />').addClass('project-layers');
-			this._updateMainView();
-		},
-
-		getMainView : function() {
-			return this._container;
-		},
-
-		getPreview : function() {
-
 			var self = this,
-				container = $('<div />').addClass('project-layers'),
-				layers = self._layers,
-				len = layers.length;
-
-			container.empty();
-			while(len--) {
-				container.prepend( layers[len].getCanvas() );
-			}
-
-			return container;
+				el = self.$el,
+				layersContainer = $('<div />').addClass('layers');
+			self._layersContainer = layersContainer;
+			el.append( layersContainer );
+			this._updateMainView();
 		},
 
 		_updateMainView : function() {
@@ -280,7 +268,7 @@ define(['libs/classy', 'core/asynctask'], function( Class, AsyncTask ) {
 			var self = this,
 				layers = self._layers,
 				len = layers.length,
-				container = self._container;
+				container = self._layersContainer;
 
 			container.empty();
 			while(len--) {
@@ -288,9 +276,28 @@ define(['libs/classy', 'core/asynctask'], function( Class, AsyncTask ) {
 			}
 		},
 
+		getPreview : function() {
+
+			var layersContainer,
+				self = this,
+				widget = self.$el.clone(),
+				layers = self._layers,
+				len = layers.length;
+
+			layersContainer = widget.find('.layers');
+
+			layersContainer.empty();
+			while(len--) {
+				layersContainer.prepend( layers[len].getCanvas() );
+			}
+
+			return widget;
+		},
+
 		_updateBackground : function() {
 			var self = this,
 				zoom = self.zoom(),
+				layersContainer = self._layersContainer,
 				canvas = self._background || document.createElement('canvas'),
 				context = canvas.getContext('2d');
 
@@ -303,21 +310,9 @@ define(['libs/classy', 'core/asynctask'], function( Class, AsyncTask ) {
 			context.fillRect( 0, 0, zoom, zoom );
 			context.fillRect( zoom, zoom, zoom, zoom );
 
-			self._container.find('canvas').css('background-image', 'none');
-			self._container.find('canvas').first().css('background-image', 'url("'+canvas.toDataURL()+'")');
+			layersContainer.find('canvas').css('background-image', 'none');
+			layersContainer.find('canvas').first().css('background-image', 'url("'+canvas.toDataURL()+'")');
 			self._background = canvas;
-		},
-
-		globalToLocal : function( pageX, pageY ) {
-
-			var self = this,
-				offset = $( self.getActiveLayer().getCanvas( true ) ).offset(),
-				coords = {};
-
-			coords.x = pageX - offset.left;
-			coords.y = pageY - offset.top;
-
-			return coords;
 		},
 
 		// Drawing methods
@@ -428,5 +423,5 @@ define(['libs/classy', 'core/asynctask'], function( Class, AsyncTask ) {
 
 	});
 
-	return Project;
+	return PixelCanvas;
 });

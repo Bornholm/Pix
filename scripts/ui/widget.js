@@ -50,17 +50,15 @@ define(['libs/classy'], function( Class ) {
 			this.$el.off();
 		},
 
-		globalToLocal : function( globalX, globalY, el ) {
+		globalToLocal : function( pageX, pageY, el ) {
 
 			var self = this,
-				el = $(el) || self.$el,
+				el = el ? $(el) : self.$el,
 				offset = el.offset(),
 				coords = {};
 
-			coords.x = globalX + document.body.scrollLeft + document.documentElement.scrollLeft; 
-			coords.y = globalY + document.body.scrollTop + document.documentElement.scrollTop; 
-			coords.x -= offset.left;
-			coords.y -= offset.top;
+			coords.x = pageX - offset.left;
+			coords.y = pageY - offset.top;
 
 			return coords;
 		}

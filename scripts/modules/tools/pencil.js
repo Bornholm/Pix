@@ -32,7 +32,7 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 				'mousedown' : self._onDrawingBinded,
 				'mousemove' : self._onDrawBinded,
 				'mouseup' : self._offDrawingBinded
-			}, '.project-layers');
+			}, '.layers');
 		},
 
 		deactivate : function() {  
@@ -42,18 +42,29 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 				'mousedown' : self._onDrawingBinded,
 				'mousemove' : self._onDrawBinded,
 				'mouseup' : self._offDrawingBinded
-			}, '.project-layers');
+			}, '.layers');
 		},
 
 		_onPixelClick : function( evt ) {
 
 			var coords,
 				self = this,
+				lineOrigin = self._lineOrigin,
 				project = self._activeProject;
 
-			coords = project.globalToLocal( evt.pageX, evt.pageY );
-			project.setPixel( coords.x, coords.y , self._eraseMode );
+			coords = project.globalToLocal( evt.pageX, evt.pageY, evt.srcElement );
 
+			if( evt.shiftKey && lineOrigin ) {
+				project.line( lineOrigin.x, lineOrigin.y, coords.x, coords.y, self._eraseMode );
+			} else {
+				project.setPixel( coords.x, coords.y , self._eraseMode );
+				self.publishToolUse();
+				
+			}
+
+			self._lineOrigin = coords;
+			
+			
 		},
 
 		_onDraw : function( evt ) {
@@ -64,10 +75,11 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 				project = self._activeProject;
 
 			if( self._isDrawing ) {
-				coords = project.globalToLocal( evt.pageX, evt.pageY );
+				coords = project.globalToLocal( evt.pageX, evt.pageY, evt.srcElement );
 				project.line( coords.x, coords.y, prevPos.x, prevPos.y, self._eraseMode );
 				prevPos.x = coords.x;
 				prevPos.y = coords.y;
+				self.publishToolUse();
 			}
 
 			return false;

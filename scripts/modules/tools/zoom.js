@@ -19,7 +19,6 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 			self._onClickBinded = self._onClick.bind( self );
 			self._onZoomToggleBinded = self._onZoomToggle.bind( self );
 
-
 			self._updateOptions();
 		},
 
@@ -28,10 +27,8 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 				options = self._toolOptions;
 
 			$(document.body).on({
-
 				'click' : self._onClickBinded
-
-			}, '.project-layers');
+			}, '.layers');
 
 			options.on('click', '.zoom-button', self._onZoomToggleBinded );
 		},
@@ -42,10 +39,8 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 				options = self._toolOptions;
 
 			$(document.body).off({
-
 				'click' : self._onClickBinded
-
-			}, '.project-layers');
+			}, '.layers');
 
 			options.off('click', '.zoom-button', self._onZoomToggleBinded );
 		},
@@ -104,6 +99,7 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 				zoom = project.zoom();
 				if( zoom+self._zoom <= 0 ) return;
 				project.zoom(zoom+self._zoom);
+				self.publishToolUse();
 			}
 		}
 

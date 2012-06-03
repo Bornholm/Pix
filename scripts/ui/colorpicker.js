@@ -1,4 +1,4 @@
-define(['ui/widget', 'core/helpers/colors'], function( Widget, ColorHelper ) {
+define(['ui/widget', 'core/helpers/colorhelper'], function( Widget, ColorHelper, undef ) {
 
 	"use strict";
 
@@ -171,6 +171,23 @@ define(['ui/widget', 'core/helpers/colors'], function( Widget, ColorHelper ) {
 			return ColorHelper.HSLToRGB( c.h, c.s, c.l );
 		},
 
+		fromColorString : function( str ) {
+			var self = this,
+				color =  ColorHelper.fromColorString( str );
+
+			if ( color && ( color.type === ColorHelper.HSL || color.type === ColorHelper.HSLA ) ) {
+				self._color = color;
+			} else if( color && ( color.type === ColorHelper.RGB || color.type === ColorHelper.RGBA ||
+						color.type === ColorHelper.HEXA || color.type === ColorHelper.HEXA_ALPHA ) ) {
+				self._color = ColorHelper.RGBToHSL( color.r, color.g, color.b );
+			} else {
+				throw new Error('Colorpicker - Unknown color format : '+str);
+			}
+			
+			self._dispatchColorChange();
+			self._update();
+		},
+
 		fromRGB : function( r, g, b ) {
 			var self = this,
 				hsl =  ColorHelper.RGBToHSL( r, g, b );
@@ -191,6 +208,7 @@ define(['ui/widget', 'core/helpers/colors'], function( Widget, ColorHelper ) {
 
 		_update : function() {
 			var self = this;
+			self._colorMapDirtyRect = null;
 			self._updateColorMap();
 			self._updateHueMap();
 			self._updateHueMapCursor();
