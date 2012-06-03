@@ -136,15 +136,15 @@ define(function() {
 
 		},
 
-		getRGBString : function( r, g, b ) {
-			return 'rgb('+r+','+g+','+b+')';
+		getRGBAString : function( r, g, b, a ) {
+			return 'rgba('+(r|0)+','+(g|0)+','+(b|0)+','+a+')';
 		},
 
-		getHSLString : function( h, s, l ) {
+		getHSLAString : function( h, s, l, a ) {
 			var h = 360*h,
 				s = ( (s*100) | 0 )+"%",
 				l = ( (l*100) | 0 )+"%";
-			return 'hsl('+h+','+s+','+l+')';
+			return 'hsla('+h+','+s+','+l+','+a+')';
 		},
 
 		HSLToRGB : function( h, s, l ) {

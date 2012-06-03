@@ -7,6 +7,8 @@ define(['ui/widget', 'core/helpers/colorhelper'], function( Widget, ColorHelper,
 		widgetClass : "colorpicker",
 
 		events : {
+			'change .alpha-range': "_updateAlphaValue",
+			'colorpicker:change' : "_updateCurrentColor",
 			'mouseout' : "_stopMovingCursors",
 			'mouseup .color-map' : "_stopMovingColorMapCursor",
 			'mousedown .color-map' : "_startMovingColorMapCursor",
@@ -36,7 +38,8 @@ define(['ui/widget', 'core/helpers/colorhelper'], function( Widget, ColorHelper,
 			self._color = {
 				h : 0,
 				s : 0.5,
-				l : 0.5
+				l : 0.5,
+				a : 1
 			};
 
 			self._initView();
@@ -47,14 +50,42 @@ define(['ui/widget', 'core/helpers/colorhelper'], function( Widget, ColorHelper,
 
 			var self = this,
 				el = self.$el,
+				infosContainer = $('<div />'),
+				currentColor = $('<div />'),
+				alphaValue = $('<span />'),
+				alphaLabel = $('<label />'),
+				alphaInput = $('<input />'),
 				hueMap = document.createElement('canvas'),
 				colorMap = document.createElement('canvas');
 			
 			self._colorMap = colorMap;
 			self._hueMap = hueMap;
+			self._currentColor = currentColor;
+			self._alphaValue = alphaValue;
+			self._alphaRange = alphaInput;
 
 			$(colorMap).addClass('color-map');
 			$(hueMap).addClass('hue-map');
+			infosContainer.addClass('info-container');
+			currentColor.addClass('current-color');
+			alphaLabel.addClass('alpha-label')
+					  .attr('for', 'alpha');
+			alphaLabel.html('Alpha :')
+			alphaInput.addClass('alpha-range')
+					  .attr({
+						name : 'alpha',
+						type : 'range',
+						min : 0,
+						max : 1,
+						value : 1,
+						step : 0.1
+					});
+			alphaValue.addClass('alpha-value');
+
+			infosContainer.append( currentColor )
+						  .append( alphaLabel )
+						  .append( alphaInput )
+						  .append( alphaValue );
 
 			// Create color map
 			colorMap.height = self._colorMapHeight;
@@ -62,7 +93,9 @@ define(['ui/widget', 'core/helpers/colorhelper'], function( Widget, ColorHelper,
 			hueMap.height = self._hueMapHeight;
 			hueMap.width = self._hueMapWidth;
 
-			el.append( colorMap ).append( hueMap );
+			el.append( colorMap )
+			  .append( hueMap )
+			  .append( infosContainer  );
 
 		},
 
@@ -152,23 +185,26 @@ define(['ui/widget', 'core/helpers/colorhelper'], function( Widget, ColorHelper,
 			this._hueMapMouseDown = false;
 		},
 
-		toHSLString : function() {
-			var color = this.toHSL();
-			return ColorHelper.getHSLString( color.h, color.s, color.l );
+		toHSLAString : function() {
+			var color = this.toHSLA();
+			return ColorHelper.getHSLAString( color.h, color.s, color.l, color.a );
 		},
 
-		toRGBString : function() {
-			var color = this.toRGB();
-			return ColorHelper.getRGBString( color.r, color.g, color.b );
+		toRGBAString : function() {
+			var color = this.toRGBA();
+			return ColorHelper.getRGBAString( color.r, color.g, color.b, color.a );
 		},
 
-		toHSL : function() {
+		toHSLA : function() {
 			return this._color;
 		},
 
-		toRGB : function() {
-			var c = this.toHSL();
-			return ColorHelper.HSLToRGB( c.h, c.s, c.l );
+		toRGBA : function() {
+			var c = this.toHSLA(),
+				alpha = c.a;
+			c = ColorHelper.HSLToRGB( c.h, c.s, c.l );
+			c.a = alpha;
+			return c;
 		},
 
 		fromColorString : function( str ) {
@@ -188,20 +224,22 @@ define(['ui/widget', 'core/helpers/colorhelper'], function( Widget, ColorHelper,
 			self._update();
 		},
 
-		fromRGB : function( r, g, b ) {
+		fromRGBA : function( r, g, b, a ) {
 			var self = this,
 				hsl =  ColorHelper.RGBToHSL( r, g, b );
+			hsl.a = a;
 			self._color = hsl;
 			self._dispatchColorChange();
 			self._update();
 		},
 
-		fromHSL : function( h, s, l ) {
+		fromHSLA : function( h, s, l, a ) {
 			var self = this,
 				color = self._color;
 			color.h = h;
 			color.s = s;
 			color.l = l;
+			color.a = a;
 			self._dispatchColorChange();
 			self._update();
 		},
@@ -213,6 +251,8 @@ define(['ui/widget', 'core/helpers/colorhelper'], function( Widget, ColorHelper,
 			self._updateHueMap();
 			self._updateHueMapCursor();
 			self._updateColorMapCursor();
+			self._updateCurrentColor();
+			self._updateAlphaValue();
 		},
 
 		_updateHueMap : function() {
@@ -338,9 +378,27 @@ define(['ui/widget', 'core/helpers/colorhelper'], function( Widget, ColorHelper,
 
 		},
 
+		_updateCurrentColor : function() {
+			var self = this,
+				currentColor = self._currentColor;
+			currentColor.css( 'background-color', self.toRGBAString() );
+		},
+
+		_updateAlphaValue : function() {
+			var alpha,
+				self = this,
+				alphaRange = self._alphaRange,
+				alphaValue = self._alphaValue;
+
+			alpha = +alphaRange.val();
+			self._color.a = alpha;
+			alphaValue.html( alpha.toPrecision(1) );
+			self._dispatchColorChange();
+		},
+
 		_dispatchColorChange : function() {
 			var self = this;
-			self.$el.trigger( self.widgetClass+":change", [ self.toHSLString(), self.toRGBString() ] );
+			self.$el.trigger( self.widgetClass+":change", [ self.toHSLAString(), self.toRGBAString() ] );
 		}
 
 

@@ -292,12 +292,6 @@ canvas {
 #colors {
 	padding: 5px 0px;
 	border-bottom : 1px solid #ccc;
-	.current-color {
-		width : 60px;
-		height : 30px;
-		border : 1px solid #ccc;
-		border-radius : 3px;
-	}
 }
 
 .zoom-button {
@@ -346,6 +340,31 @@ canvas {
 		cursor : default;
 		margin-right : 5px;
 		border-radius : 3px;
+	}
+
+	.info-container {
+
+		.current-color {
+			width: 40px;
+			height: 30px;
+			border: 1px solid #CCC;
+			border-radius: 3px;
+			display: inline-block;
+		}
+
+		.alpha-label, .alpha-value {
+			line-height: 30px;
+			font-weight: bold;
+			margin: 5px;
+			vertical-align: top;
+		}
+
+		.alpha-range {
+			height: 30px;
+			width: 60px;
+		}
+
+
 	}
 }
 

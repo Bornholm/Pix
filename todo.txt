@@ -1,6 +1,6 @@
 x Passage Project en Widget
 Palette des couleurs utilisées
-Ctrl-Z
+Ctrl-Z & Historique
 Pipette
 Raccourcis clavier
 Sauvegarde/Chargement projet localStorage
@@ -9,3 +9,5 @@ Gestions des calques
 Maximize/Minimize Panel
 Styling CSS
 x Shifth -> Line
+Confirm page close
+Ouvrir une image
