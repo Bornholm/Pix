@@ -1,4 +1,4 @@
-define(['yajf/module'], function( Module ) {
+define(['modules/subscriber'], function( Module ) {
 
 	var ToolBase = Module.$extend({
 
@@ -8,26 +8,22 @@ define(['yajf/module'], function( Module ) {
 			icon : "Tool's icon"
 		},
 
+		subs : {
+			'project:active' : '_onActiveProjectChange',
+			'toolbox:select' : '_onToolSelected'
+		},
+
 		start : function( opts ) {
 			var self = this;
 			self._isActive = false;
 			self._toolOptions = $('<div />');
 			self._registerTool();
-			self._initModulesEventsHandlers();
 		},
 
 		_registerTool : function() {
 			var self = this,
-				def = self._toolDefinition,
-				events = self.sandbox.events;
-			events.publish('toolbox:register', [ def.id, def.label, def.icon, self._toolOptions ] );
-		},
-
-		_initModulesEventsHandlers : function() {
-			var self = this,
-				events = self.sandbox.events;
-			events.subscribe('project:active', self._onActiveProjectChange.bind( self ) );
-			events.subscribe('toolbox:select', self._onToolSelected.bind( self ) );
+				def = self._toolDefinition;
+			self.publish('toolbox:register', [ def.id, def.label, def.icon, self._toolOptions ] );
 		},
 
 		_onActiveProjectChange : function( project ) {
@@ -54,15 +50,7 @@ define(['yajf/module'], function( Module ) {
 
 		deactivate : function() {
 			console.log( "Deactivate", this._toolDefinition.id );
-		},
-
-		publishToolUse : function() {
-			var self = this,
-				definition = self._toolDefinition,
-				events = self.sandbox.events;
-			events.publish('toolbox:use', [ definition.id, definition.label, definition.icon ]);
 		}
-
 
 	});
 

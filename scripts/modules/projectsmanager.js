@@ -1,5 +1,5 @@
 define( [	
-			"yajf/module",
+			"modules/subscriber",
 			"core/pixelcanvas",
 			"libs/text!modules/templates/newproject.tpl",
 			"libs/zepto.min"
@@ -8,19 +8,15 @@ define( [
 
 	var ProjectManager = Module.$extend({
 
+
+		subs : {
+			'menu:item:click' : '_onMenuItemClick',
+			'panel:focus' : '_onPanelFocus'
+		},
+
 		start : function() {
 			var self = this;
 			self._projects = [];
-			self._initEventsHandlers();
-		},
-
-		_initEventsHandlers : function() {
-
-			var self = this,
-				events = self.sandbox.events;
-
-			events.subscribe( "menu:item:click", self._onMenuItemClick.bind( self ) );
-			events.subscribe( "panel:focus", self._onPanelFocus.bind( self ) );
 		},
 
 		_onMenuItemClick : function( menuItem ) {
@@ -78,7 +74,6 @@ define( [
 
 			var panel, project,
 				self = this,
-				events = self.sandbox.events,
 				panman = self.sandbox.panelsManager;
 
 			project = new PixelCanvas({
@@ -94,7 +89,7 @@ define( [
 				project : project
 			});
 
-			events.publish( 'project:new' , [project] );
+			self.publish( 'project:new' , [project] );
 
 			console.log(projectName, width, height);
 		},
@@ -105,13 +100,12 @@ define( [
 			var proj,
 				self = this,
 				projects = self._projects,
-				len = projects.length,
-				events = self.sandbox.events;
+				len = projects.length;
 
 			while(len--) {
 				proj = projects[len];
 				if( proj.panel === panel ) {
-					events.publish( 'project:active', [proj.project] );
+					self.publish( 'project:active', [proj.project] );
 					break;
 				}
 			}

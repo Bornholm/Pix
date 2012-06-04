@@ -99,7 +99,6 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 				zoom = project.zoom();
 				if( zoom+self._zoom <= 0 ) return;
 				project.zoom(zoom+self._zoom);
-				self.publishToolUse();
 			}
 		}
 

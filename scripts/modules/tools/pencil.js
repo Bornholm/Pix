@@ -57,9 +57,7 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 			if( evt.shiftKey && lineOrigin ) {
 				project.line( lineOrigin.x, lineOrigin.y, coords.x, coords.y, self._eraseMode );
 			} else {
-				project.setPixel( coords.x, coords.y , self._eraseMode );
-				self.publishToolUse();
-				
+				project.setPixel( coords.x, coords.y , self._eraseMode );				
 			}
 
 			self._lineOrigin = coords;
@@ -79,7 +77,6 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 				project.line( coords.x, coords.y, prevPos.x, prevPos.y, self._eraseMode );
 				prevPos.x = coords.x;
 				prevPos.y = coords.y;
-				self.publishToolUse();
 			}
 
 			return false;

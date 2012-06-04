@@ -52,7 +52,6 @@ define(['libs/classy'], function( Class ) {
 				var data = event.data;
 				if( data.type === 'asynctask' ) {
 					onComplete && onComplete( data.result );
-					console.log("Worker Terminated !");
 				} else {
 					onError && onError( 'Unknown Error' );
 				}

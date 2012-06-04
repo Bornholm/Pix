@@ -11,5 +11,6 @@ Moar colours
 x Clic + Shifth -> Line
 Confirm page close
 Open image
+x PubSub-aware Module
 x AsyncTask @Worker
 x Widget @Backbone @View

@@ -1,19 +1,10 @@
-define(['yajf/module'], function( Module ) {
+define(['modules/subscriber'], function( Module ) {
 	
 	var Export = Module.$extend({
 
-		start : function() {
-			var self = this;
-			self._initEventsHandlers();
-		},
-
-		_initEventsHandlers : function() {
-
-			var self = this,
-				events = self.sandbox.events;
-
-			events.subscribe( "menu:item:click", self._onMenuItemClick.bind( self ) );
-			events.subscribe( "project:active", self._onActiveProjectChange.bind( self ) );
+		subs : {
+			'menu:item:click' : '_onMenuItemClick',
+			'project:active' : '_onActiveProjectChange'
 		},
 
 		_onActiveProjectChange : function( project ) {

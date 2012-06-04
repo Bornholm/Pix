@@ -1,6 +1,10 @@
-define(['yajf/module', 'ui/colorpicker', 'ui/colorpalette'], function( Module, ColorPicker, ColorPalette ) {
+define(['modules/subscriber', 'ui/colorpicker', 'ui/colorpalette'], function( Module, ColorPicker, ColorPalette ) {
 
 	var ColorsModule = Module.$extend({
+
+		subs : {
+			'project:active' : '_onActiveProjectChange'
+		},
 
 		start : function( opts ) {
 
@@ -31,8 +35,6 @@ define(['yajf/module', 'ui/colorpicker', 'ui/colorpalette'], function( Module, C
 			var self = this,
 				cp = self._colorPicker,
 				events = self.sandbox.events;
-
-			events.subscribe('project:active', self._onActiveProjectChange.bind( self ) );
 			cp.$el.on('colorpicker:change', self._colorPickerChangeHandler.bind( self ) );
 		},
 
