@@ -1,4 +1,4 @@
-define(['core/pix', 'core/asynctask'], function( Pix, AsyncTask ) {
+define(['core/pix'], function( Pix ) {
 	var app = new Pix();
 	app.start();
 });

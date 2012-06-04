@@ -343,10 +343,12 @@ define(['libs/classy', 'ui/widget', 'core/asynctask'], function( Class, Widget, 
 
 		setPixel : function( x, y, eraseMode ) {
 			this.getActiveLayer().setPixel( x, y, eraseMode );
+			this._dispatchChange( 'pixel', x, y, eraseMode );
 		},
 
 		line : function( x, y, x2, y2, eraseMode ) {
 			this.getActiveLayer().line( x, y, x2, y2, eraseMode );
+			this._dispatchChange( 'line', x, y, x2, y2, eraseMode );
 		},
 
 		width : function( w ) {
@@ -419,6 +421,11 @@ define(['libs/classy', 'ui/widget', 'core/asynctask'], function( Class, Widget, 
 			}
 
 			self._updateBackground();
+		},
+
+		_dispatchChange : function() {
+			var args = Array.prototype.slice.call( arguments );
+			this.$el.trigger('pixelcanvas:change', args );
 		}
 
 	});
