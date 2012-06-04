@@ -16,6 +16,7 @@ define( [
 
 			// Others
 			'modules/colors',
+			'modules/todo',
 
 			// Extensions
 			"extensions/pubsub",
@@ -25,7 +26,7 @@ define( [
 	function( Core, 
 			MenuMod, ProjectsManMod, ExportMod, PreviewMod,
 			ToolsMod, PencilMod, ZoomMod, EraserMod,
-			ColorsMod,
+			ColorsMod, TodoMod,
 			PubSubExt, PanManExt, TemplateExt ) {
 
 	var Pix = Core.$extend({
@@ -58,6 +59,7 @@ define( [
 
 			// Others
 			self.registerModule( 'colors', ColorsMod );
+			self.registerModule( 'todo', TodoMod );
 
 		},
 
@@ -123,6 +125,10 @@ define( [
 			// Starting Others Modules
 			self.startModule( 'colors', {
 				container : $('#colors')
+			});
+
+			self.startModule( 'todo', {
+				link : $("#logo")
 			});
 
 		}

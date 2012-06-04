@@ -1,0 +1,59 @@
+
+body {
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+#todo-container {
+	text-align : center;
+}
+
+.todo {
+	font-size : 12px;
+	color : #222;
+	display: inline-block;
+}
+
+td.priority {
+	text-align : center;
+}
+
+th, td {
+	padding : 5px;
+}
+
+td, th {
+	border-radius : 2px;
+}
+
+div.controls {
+	text-align : right;
+}
+
+tr {
+	-webkit-transition: background 0.2s ease;
+	-moz-transition: background 0.2s ease;
+	-o-transition: background 0.2s ease;
+	transition: background 0.2s ease;
+}
+
+tr:nth-child(odd) {
+	background-color: #DAECF5;
+}
+
+th {
+	background-color : #AECDE5;
+}
+
+tr:hover {
+	background-color : #AECDE5;
+}
+
+td:hover {
+	background-color : #8EC1E8;
+}
+
+tr.closed {
+	display : none;
+	background-color : #D3F7BC;
+	text-decoration: line-through;
+}

@@ -1,0 +1,15 @@
+x Project -> Widget
+(A) Palette
+(C) History Manager
+(B) Pipette
+Keyboard shortcuts
+Load/Save project @LocalStorage
+Zoom %
+Layers
+Maximize/Minimize Panel
+Moar colours
+x Clic + Shifth -> Line
+Confirm page close
+Open image
+x AsyncTask @Worker
+x Widget @Backbone @View
