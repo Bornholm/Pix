@@ -1,39 +1,18 @@
 define(function() {
 
 	"use strict";
+
+	var has = 'hasOwnProperty';
 	
-	var Color = function( colorString ) {
+	var Color = function( color ) {
 
-		var color,
-			self = this;
+		if ( color instanceof Color ) {
+			return new Color( color.toRGBA() );
+		} 
 
+		var self = this;
 		self._a = 1;
-
-		if( colorString ) {
-			color = self.parseColorString( colorString );
-			if( color ) {
-				color.hasOwnProperty('a') && ( self._a = color.a );
-				switch( color.type ) {
-					case Color.HSL:
-					case Color.HSLA:
-						color = Color.HSLtoRGB( color.h, color.s, color.l );
-					case Color.HEXA:
-					case Color.HEXA_ALPHA:
-					case Color.RGB:
-					case Color.RGBA:
-						self._r = color.r;
-						self._g = color.g;
-						self._b = color.b;
-				};
-			} else {
-				throw new Error('Unknown color format !');
-			}
-		} else {
-			self._r = 0;
-			self._g = 0;
-			self._b = 0;
-		}
-
+		self.from( color );
 	},
 	p = Color.prototype;
 
@@ -64,7 +43,7 @@ define(function() {
 			g = hueToRGB(p, q, h);
 			b = hueToRGB(p, q, h - 1/3);
 		}
-		return { r : (r * 255)|0, g : (g * 255)|0, b : (b * 255)|0 };
+		return { r : (r * 255)<<0, g : (g * 255)<<0, b : (b * 255)<<0 };
 	};
 
 	Color.RGBToHSL = function( r, g, b ) {
@@ -104,96 +83,148 @@ define(function() {
 		hsla : /^hsla\(\s*(\d{1,3}(\.\d*)?)\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%\s*,\s*(\d{1}(\.\d*)?)\s*\)/
 	};
 
-	p.parseColorString = function( str ) {
+	p._parseColorString = function( str ) {
 
 		var color,
 			alpha = "a",
 			self = this;
 
 		// Test RGB
-		color = self.parseRGBString( str );
+		color = self._parseRGBString( str );
 		if( color ) {
-			color.type = color.hasOwnProperty( alpha ) ? Color.RGBA : Color.RGB;
+			color.type = color[has]( alpha ) ? Color.RGBA : Color.RGB;
 			return color;
 		}
 
 		// Test HSL
-		color = self.parseHSLString( str );
+		color = self._parseHSLString( str );
 		if( color ) {
-			color.type = color.hasOwnProperty( alpha ) ? Color.HSLA : Color.HSL;
+			color.type = color[has]( alpha ) ? Color.HSLA : Color.HSL;
 			return color;
 		}
 
 		// Test HEXA
-		color = self.parseHexaString( str );
+		color = self._parseHexaString( str );
 		if( color ) {
-			color.type = color.hasOwnProperty( alpha ) ? Color.HEXA_ALPHA : Color.HEXA;
+			color.type = color[has]( alpha ) ? Color.HEXA_ALPHA : Color.HEXA;
 			return color;
 		}
 
 	};
 
-	p.toRGBAString = function() {
-		var self = this;
-		return 'rgba('+self._r+','+self._g+','+self._b+','+self._a+')';
+	p.toRGBString = function( alpha ) {
+		var color = this.toRGBA();
+		return 'rgb'+ ( alpha ? 'a' : '') +'('+color.r+','+color.g+','+color.b+ ( alpha ? ','+this._a : '' ) + ')';
 	};
 
-	p.toRGBString = function() {
-		var self = this;
-		return 'rgb('+self._r+','+self._g+','+self._b+')';
-	};
-
-	p.toHSLAString = function() {
-		var hsl = this.toHSLA();
-		hsl.h = (360*hsl.h)|0;
-		hsl.s = ( (hsl.s*100) | 0 )+"%";
-		hsl.l = ( (hsl.l*100) | 0 )+"%";
-		return 'hsla('+hsl.h+','+hsl.s+','+hsl.l+','+hsl.a+')';
-	};
-
-	p.toHSLString = function() {
-		var hsl = this.toHSLA();
-		hsl.h = (360*hsl.h)|0;
-		hsl.s = ( (hsl.s*100) | 0 )+"%";
-		hsl.l = ( (hsl.l*100) | 0 )+"%";
-		return 'hsl('+hsl.h+','+hsl.s+','+hsl.l+')';
-	};
-
-	p.toHSLA = function() {
+	p.toHSLString = function( alpha ) {
 		var self = this,
-			color = Color.RGBToHSL(
-				self._r,
-				self._g,
-				self._b
+			h = (360*self._h) << 0,
+			s = ( (self._s*100) << 0 )+"%",
+			l = ( (self._l*100) << 0 )+"%";
+		return 'hsl'+ ( alpha ? 'a' : '') +'('+h+','+s+','+l+ ( alpha ? ','+self._a : '' )+')';
+	};
+
+	p.toRGBA = function() {
+		var self = this,
+			color = Color.HSLToRGB(
+				self._h,
+				self._s,
+				self._l
 			);
 		color.a = self._a;
 		return color;
 	};
 
-	p.toRGBA = function() {
+	p.toHSLA = function() {
 		var self = this;
 		return  {
-			r : self._r,
-			g : self._g,
-			b : self._b,
-			a : self._a
+			h : +(self._h).toFixed(2),
+			s : +(self._s).toFixed(2),
+			l : +(self._l).toFixed(2),
+			a : +(self._a).toFixed(2)
 		};
 	};
 
+	p.from = function( color ) {
+
+		var self = this,
+			isOk = false;
+
+		if( color ) {
+
+			if( typeof color === 'string' ) {
+				color = self._parseColorString( color );
+				if( color ) {
+					color[has]('a') && ( self._a = color.a );
+					switch( color.type ) {
+						case Color.HEXA:
+						case Color.HEXA_ALPHA:
+						case Color.RGB:
+						case Color.RGBA:
+							color = Color.RGBToHSL( color.r, color.g, color.b );
+						case Color.HSL:
+						case Color.HSLA:
+							self._h = +(color.h).toFixed(2);
+							self._s = +(color.s).toFixed(2);
+							self._l = +(color.l).toFixed(2);
+							isOk = true;
+					};
+				}
+			} else if( typeof color === 'object' ) {
+				if( color[has]('r') && color[has]('g') && color[has]('b') ) {
+					self.fromRGB( color.r, color.g, color.b );
+					color[has]('a') && self.alpha( color.a );
+					isOk = true;
+				} else if ( color[has]('h') && color[has]('s') && color[has]('l') ) {
+					self.fromHSL( color.h, color.s, color.l );
+					color[has]('a') && self.alpha( color.a );
+					isOk = true;
+				}
+			}
+
+		} else {
+			self._h = 0;
+			self._s = 0;
+			self._l = 0;
+			isOk = true;
+		}
+
+		if( !isOk ) throw new Error('Unknown color format !');
+	};
+
 	p.fromHSL = function( h, s, l ) {
-		var color = Color.HSLToRGB( h, s, l );
-		self._r = color.r;
-		self._g = color.g;
-		self._b = color.b;
+		var self = this;
+		self._h = +h.toFixed(2);
+		self._s = +s.toFixed(2);
+		self._l = +l.toFixed(2);
 	};
 
 	p.fromRGB = function( r, g, b ) {
-		self._r = r;
-		self._g = g;
-		self._b = b;
+		var self = this,
+			hsl = Color.RGBToHSL( r, g, b );
+		self._h = +hsl.h.toFixed(2);
+		self._s = +hsl.s.toFixed(2);
+		self._l = +hsl.l.toFixed(2);
 	};
 
-	p.parseHexaString = function( str ) {
+	p.alpha = function( a ) {
+		if( arguments.length > 0 ) {
+			this._a = a > 1 ? 1 : ( a < 0 ? 0 : a );
+		} else {
+			return this._a;
+		}
+	};
+
+	p.equals = function( color ) {
+		return this.toHSLString( true ) === new Color( color ).toHSLString( true );
+	};
+
+	p.toString = function() {
+		return this.toRGBAString();
+	};	
+
+	p._parseHexaString = function( str ) {
 		var match, color,
 			self = this,
 			hexaPattern = self.patterns.hexa,
@@ -221,7 +252,7 @@ define(function() {
 		return color ? color : null;
 	};
 
-	p.parseRGBString = function( str ) {
+	p._parseRGBString = function( str ) {
 
 		var match, color,
 			self = this,
@@ -250,7 +281,7 @@ define(function() {
 		return color ? color : null;
 	};
 
-	p.parseHSLString = function( str ) {
+	p._parseHSLString = function( str ) {
 
 		var match, color,
 			self = this,
@@ -279,8 +310,6 @@ define(function() {
 		return color ? color : null;
 
 	};
-
-	
 
 	return Color;
 });
