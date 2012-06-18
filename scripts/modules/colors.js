@@ -1,4 +1,4 @@
-define(['modules/subscriber', 'ui/colorpicker', 'ui/colorpalette'], function( Module, ColorPicker, ColorPalette ) {
+define(['core/subscriber', 'ui/colorpicker', 'ui/colorpalette'], function( Module, ColorPicker, ColorPalette ) {
 
 	var ColorsModule = Module.$extend({
 
@@ -11,7 +11,7 @@ define(['modules/subscriber', 'ui/colorpicker', 'ui/colorpalette'], function( Mo
 			var self = this;
 
 			opts = opts || {};
-			self._container = opts.container;
+			self._container = $(opts.container);
 			self._colors = [];
 
 			self._initView();
@@ -34,46 +34,36 @@ define(['modules/subscriber', 'ui/colorpicker', 'ui/colorpalette'], function( Mo
 		},
 
 		_initEventsHandler : function() {
-			var self = this;
-
-			self._colorpicker.$el.on('colorpicker:change', self._colorPickerChangeHandler.bind( self ) );
-			self._palette.$el.on('palette:select', self._onPaletteSelection.bind( self ) );
+			var self = this,
+				container = self._container;
+			container.on('colorpicker:change', '.ui-widget.colorpicker', self._colorPickerChangeHandler.bind( self ) );
+			container.on('colorpalette:select', '.ui-widget.colorpalette', self._onPaletteSelection.bind( self ) );
 		},
 
-		_colorPickerChangeHandler : function( evt, hslaString ) {
+		_colorPickerChangeHandler : function( evt, color ) {
 			var self = this,
 				project = self._activeProject;
-			if( project ) {
-				project.color( hslaString );
-			}
+			project && project.color( color );
 		},
 
 		_onPaletteSelection : function( evt, color ) {
-			this._colorpicker.fromColorString( color );
+			this._colorpicker.color( color );
 		},
 
 		_onActiveProjectChange : function( project ) {
+
 			var self = this,
 				cp = self._colorpicker;
-
 			self._activeProject &&	self._activeProject.$el.off( 'pixelcanvas:change', self._onPixelCanvasChangeBinded );
 			self._activeProject = project;
 			project.$el.on( 'pixelcanvas:change', self._onPixelCanvasChangeBinded );
-
-			project.color( cp.toHSLAString() );
+			project.color( cp.color() );
 		},
 
 		_onPixelCanvasChange : function() {
 			var self = this,
 				project = self._activeProject;
 			self._palette.addColor( project.color() );
-		},
-
-		_updateColorPickerColor : function() {
-			var self = this,
-				cp = self._colorpicker,
-				project = self._activeProject;
-			cp.fromColorString( project.color() );
 		}
 
 	});

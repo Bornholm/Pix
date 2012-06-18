@@ -221,7 +221,7 @@ define(function() {
 	};
 
 	p.toString = function() {
-		return this.toRGBAString();
+		return this.toRGBString( true );
 	};	
 
 	p._parseHexaString = function( str ) {

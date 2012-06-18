@@ -1,8 +1,8 @@
-define(['ui/widget'], function( Widget ){
+define(['ui/widget', 'core/color'], function( Widget, Color ){
 
 	var ColorPalette = Widget.$extend({
 
-		widgetClass : 'palette',
+		widgetClass : 'colorpalette',
 
 		events : {
 			'click .color' : '_onColorClick'
@@ -36,29 +36,44 @@ define(['ui/widget'], function( Widget ){
 		_onColorClick : function( evt ) {
 			var target = $(evt.currentTarget),
 				color = target.css('background-color');
-			this.$el.trigger( 'palette:select', [ color ] );
+			this.$el.trigger( this.widgetClass+':select', [ new Color( color ) ] );
 		},
 
-		addColor : function( clrString ) {
+		addColor : function( color ) {
 			var self = this;
-			if( !self.hasColor( clrString ) ) {
-				self._colors.push( clrString );
+			color = new Color( color );
+			if( !self.hasColor( color ) ) {
+				self._colors.push( color );
 				self._update();
 			}
 		},
 
-		removeColor : function( clrString ) {
+		removeColor : function( color ) {
 			var self = this,
 				colors = self._colors,
-				index = colors.indexOf( clrString );
+				index = self.indexOf( clrString );
 			if ( index !== -1) {
 				colors.splice( index, 1 );
 				self._update();
 			} 
 		},
 
-		hasColor : function( clrString ) {
-			return this._colors.indexOf( clrString ) !== -1;
+		hasColor : function( color ) {
+			return this.indexOf( color ) !== -1;
+		},
+
+		indexOf : function( color ) {
+			var i, c,
+				colors = this._colors,
+				len = colors.length;
+			color = new Color( color );
+			for ( i = 0; i < len; ++i ) {
+				c = colors[i];
+				if( c.equals( color ) ) {
+					return i;
+				}
+			}
+			return -1;
 		},
 
 		getColors : function() {

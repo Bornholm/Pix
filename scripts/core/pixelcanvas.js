@@ -1,4 +1,4 @@
-define(['libs/classy', 'ui/widget', 'core/asynctask'], function( Class, Widget, AsyncTask ) {
+define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color'], function( Class, Widget, AsyncTask, Color ) {
 
 	"use strict";
 
@@ -225,7 +225,7 @@ define(['libs/classy', 'ui/widget', 'core/asynctask'], function( Class, Widget, 
 			self._initContainer();
 			self.newLayer();
 
-			self.color('#FF000000');
+			self.color( new Color() );
 			self.zoom(1);
 			
 		},
@@ -322,6 +322,7 @@ define(['libs/classy', 'ui/widget', 'core/asynctask'], function( Class, Widget, 
 			if( arguments.length === 0 ) {
 				return self._color;
 			} else {
+				color = new Color( color );
 				self._color = color;
 				self._updateColor();
 			}
@@ -330,13 +331,13 @@ define(['libs/classy', 'ui/widget', 'core/asynctask'], function( Class, Widget, 
 		_updateColor : function() {
 
 			var self = this,
-				color = self._color,
+				colorStr = self._color.toRGBString( true ),
 				layers = self.getLayers(),
 				len = layers.length;
 
 			while(len--) {
-				layers[len].getContext().fillStyle = color;
-				layers[len].getContext( true ).fillStyle = color;
+				layers[len].getContext().fillStyle = colorStr;
+				layers[len].getContext( true ).fillStyle = colorStr;
 			}
 
 		},
