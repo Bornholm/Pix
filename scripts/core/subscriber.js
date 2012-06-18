@@ -4,8 +4,8 @@ define(['yajf/module', 'core/subscriber.mixin'], function( Module, SubsMixin ) {
 
 		__include__ : [ SubsMixin ],
 
-		__init__ : function( opts ) {
-			this.$super( opts );
+		__init__ : function( sandbox ) {
+			this.$super( sandbox );
 			this.addSubs();
 		}
 

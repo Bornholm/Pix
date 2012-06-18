@@ -1,4 +1,4 @@
-define(['modules/subscriber'], function( Module ) {
+define(['core/subscriber'], function( Module ) {
 
 	var ToolBase = Module.$extend({
 

@@ -1,4 +1,4 @@
-define( [ "modules/subscriber", "libs/zepto.min" ], function( Module ) {
+define( [ "core/subscriber", "libs/zepto.min" ], function( Module ) {
 
 	var Tools = Module.$extend({
 

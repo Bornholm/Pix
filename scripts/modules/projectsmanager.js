@@ -1,5 +1,5 @@
 define( [	
-			"modules/subscriber",
+			"core/subscriber",
 			"core/pixelcanvas",
 			"libs/text!modules/templates/newproject.tpl",
 			"libs/zepto.min"
