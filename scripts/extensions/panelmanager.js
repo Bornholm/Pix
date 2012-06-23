@@ -58,7 +58,7 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 			var self = this,
 				box = panel.el.offset();
 			!self._boundsContain( box.left, box.top, box.width, box.height ) && self._center( panel );
-			self._container.append( panel.el );
+			panel.el.parent().append( panel.el );
 		},
 
 		_add : function( panelContent, panelTitle, isDraggable, isModal ) {
@@ -78,7 +78,7 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 			isModal && self._setModal( panel );
 
 			self._restore( panel );
-			self._setFocus( panel );
+			self._setFocus( panel );			
 
 			events.publish("panel:focus", [ panel ] );
 
@@ -89,11 +89,10 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 
 			var self = this,
 				modalLayer = self._modalLayer;
-
 			modalLayer.show();
+			modalLayer.append( panel.el );
 			panel.el.addClass('modal');
 			self._center( panel );
-			panel.el.css('z-index', modalLayer.css('z-index')+1);
 		},
 
 		_center : function( panel ) {
@@ -138,8 +137,8 @@ define( ["yajf/extension", "ui/panel"], function( Extension, Panel ) {
 
 			var self = this,
 				events = self.sandbox.events;
-			self._container.find('.ui-panel').removeClass('active');
-			self._container.append( panel.el );
+			panel.el.parent().find('.ui-panel').removeClass('active');
+			panel.el.parent().append( panel.el );
 			panel.el.addClass('active');
 			events.publish("panel:focus", [ panel ] );
 		},

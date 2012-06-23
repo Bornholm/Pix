@@ -1,5 +1,5 @@
 x Project -> Widget
-(A) Palette
+x Palette
 (C) History Manager
 (B) Pipette
 Keyboard shortcuts

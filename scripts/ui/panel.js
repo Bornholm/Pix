@@ -19,13 +19,13 @@ define( [ "libs/classy", "libs/zepto.min" ], function( Class ) {
 
 			self.el.append(
 				$('<div />')
-				.addClass('ui-panel-title')
+				.addClass('title')
 				.append( self._title )
 			);
 
 			self.el.append(
 				$('<div />')
-				.addClass('ui-panel-content')
+				.addClass('content')
 				.append( self._content )
 			);
 		},
@@ -40,7 +40,7 @@ define( [ "libs/classy", "libs/zepto.min" ], function( Class ) {
 
 		content : function( newContent ) {
 			var self = this,
-				content =  self.el.find('.ui-panel-content');
+				content =  self.el.find('.content');
 			if(arguments.length === 0) {
 				return content;
 			} else {
@@ -50,7 +50,7 @@ define( [ "libs/classy", "libs/zepto.min" ], function( Class ) {
 
 		title : function( newTitle ) {
 			var self = this,
-				title =  self.el.find('.ui-panel-title');
+				title =  self.el.find('.title');
 			if(arguments.length === 0) {
 				return title;
 			} else {

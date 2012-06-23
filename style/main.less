@@ -1,7 +1,7 @@
 
-/*
- * Color Scheme
- */
+/****************
+ * Mixins & Vars
+ ****************/
 
 @backgroundColor : #fdfdfd;
 
@@ -69,7 +69,44 @@
     box-shadow:  0px 0px 3px 1px rgba(0, 0, 0, 0.1);
 }
 
-@topBarHeight : 25px;
+
+/* ************************************************************************
+ * 								Main Layout
+ * http://www.ssi-developer.net/main/templates/temps/3c-hd-ft-flex.htm
+ **************************************************************************/
+
+ @topBarHeight : 25px;
+ @leftToolsWidth : 90px;
+ @rightToolsWidth : 220px;
+
+ #c-block {
+ 	width: 100%;
+	z-index: 1;
+	height: 100%;
+ }
+
+ .c-col {
+ 	margin: @topBarHeight @rightToolsWidth 0  @leftToolsWidth;
+	position: relative;
+	z-index: 5;
+	height: 100%;
+ }
+
+ .l-col {
+ 	position: absolute;
+	top: 0;
+	left: 0;
+	width:  @leftToolsWidth;
+	z-index: 3;
+ }
+
+ .r-col {
+ 	position: absolute;
+	top: 0;
+	right: 0;
+	width: @rightToolsWidth;
+	z-index: 2;
+ }
 
 /***************
 	Elements 
@@ -112,60 +149,6 @@ iframe {
 	left : 0;
 }
 
-#workspace {
-
-	.noMarginAndPadding;
-	width : 100%;
-	height : 100%;
-
-	div.ui-panel {
-
-		display: table;
-		background : white;
-		border : 1px solid #ccc;
-		position : absolute;
-		top : @topBarHeight + 15;
-		left : 15px;
-		overflow: hidden;
-		border-radius : 3px;
-		.outShadow;
-
-		&.active {
-			opacity : 1;
-		}
-
-		-webkit-transition: opacity 0.5s ease;
-		-moz-transition: opacity 0.5s ease;
-		-ms-transition: opacity 0.5s ease;
-		-o-transition: opacity 0.5s ease;
-		transition: opacity 0.5s ease;
-
-		.ui-panel-title {
-
-			@titleHeight : 25px;
-			height : @titleHeight;
-			line-height : @titleHeight;
-			border-bottom : 1px solid #ccc;
-			padding : 0px 10px;
-			font-weight : bold;
-
-			&:active {
-				cursor : move;
-			}
-
-			.noSelect;
-
-		}
-
-		.ui-panel-content {
-			overflow: auto;
-			padding : 3px;
-
-			.noSelect;
-		}
-	}
-}
-
 #top-bar {
 
 	@lineHeight : @topBarHeight;
@@ -180,6 +163,7 @@ iframe {
 	width : 100%;
 	border-bottom : 2px solid #ccc;
 	z-index : 100;
+	top : 0;
 
 	.noMarginAndPadding;
 	//.shadeGradient(#ffffff);
@@ -259,14 +243,19 @@ iframe {
 	}
 }
 
+#workspace {
+
+	.border-box;
+	.c-col;
+
+	border-left : 1px solid #ccc;
+	border-right : 1px solid #ccc;
+}
+
 #left-tools {
 
-	position : absolute;
-	left: 0;
-	top: 0;
-	width: 85px;
-	height: 100%;
-	border-right : 1px solid #ccc;
+	.l-col;
+
 	padding: @topBarHeight + 10px 10px 0px 10px;
 
 	.border-box;
@@ -277,20 +266,22 @@ iframe {
 		padding-top : 5px;
 	}
 
-	.ui-toolbox-tool {
-		.toggle-button;
+	.ui-toolbox {
+
+		.ui-toolbox-tool {
+			.toggle-button;
+		}
 	}
+
+	
 }
 
 #right-tools {
-	position : absolute;
-	right: 0;
-	top: 0;
-	width: 220px;
-	height: 100%;
-	border-left : 1px solid #ccc;
-	padding: @topBarHeight + 10px 10px 0px 10px;
+
+	.r-col;
 	.border-box;
+	
+	padding: @topBarHeight + 10px 10px 0px 10px;
 }
 
 #colors {
@@ -336,6 +327,55 @@ iframe {
 /********************
 	Widgets
 *********************/
+
+.ui-panel {
+
+	.border-box;
+
+	display: table;
+	background : white;
+	border : 1px solid #ccc;
+	position : absolute;
+	top : @topBarHeight + 15;
+	left : 15px;
+	overflow: hidden;
+	border-radius : 3px;
+	.outShadow;
+
+	&.active {
+		opacity : 1;
+	}
+
+	-webkit-transition: opacity 0.5s ease;
+	-moz-transition: opacity 0.5s ease;
+	-ms-transition: opacity 0.5s ease;
+	-o-transition: opacity 0.5s ease;
+	transition: opacity 0.5s ease;
+
+	.title {
+
+		@titleHeight : 25px;
+		height : @titleHeight;
+		line-height : @titleHeight;
+		border-bottom : 1px solid #ccc;
+		padding : 0px 10px;
+		font-weight : bold;
+
+		&:active {
+			cursor : move;
+		}
+
+		.noSelect;
+
+	}
+
+	.content {
+		overflow: auto;
+		padding : 3px;
+
+		.noSelect;
+	}
+}
 
 .ui-widget.pixel-canvas {
 
@@ -401,5 +441,4 @@ iframe {
 	}
 
 }
-
 
