@@ -1,4 +1,4 @@
-define(['yajf/module'], function( Module ) {
+define(['yajf/module', 'ui/panel'], function( Module, Panel ) {
 	
 	var Preview = Module.$extend({
 
@@ -32,12 +32,14 @@ define(['yajf/module'], function( Module ) {
 
 			var self = this,
 				panel = self._panel,
-				panels = self.sandbox.panelsManager;
+				panman = self.sandbox.panelsManager;
 
 			if( panel ) {
-				panels.restore( panel );
+				panman.reset( panel );
 			} else {
-				panel = self._panel = panels.create( '', 'Project Preview', true );
+				self._panel = panel = panel || new Panel({ title : 'Project Preview' });
+				panman.add( panel );
+				panman.draggable( panel );
 			}
 
 			self._updatePreview();

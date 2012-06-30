@@ -1,46 +1,39 @@
-define( [ "libs/classy", "libs/zepto.min" ], function( Class ) {
+define( [ "ui/widget" ], function( Widget ) {
 
-	var Panel = Class.$extend({
+	var Panel = Widget.$extend({
 
 		__init__ : function( opts ) {
 			var self = this;
 			opts = opts || {};
+			self.$super();
+			self._generateId();
 			self._content = opts.content || "";
 			self._title = opts.title || "";
 			self._render();
-			opts.id && self.setId( opts.id );
 		},
 
 		_render : function() {
+
 			var self = this;
-			self.el = $('<div />');
 
-			self.el.addClass('ui-panel');
+			self.$el.addClass('ui-panel');
 
-			self.el.append(
+			self.$el.append(
 				$('<div />')
 				.addClass('title')
 				.append( self._title )
 			);
 
-			self.el.append(
+			self.$el.append(
 				$('<div />')
 				.addClass('content')
 				.append( self._content )
 			);
 		},
 
-		setId : function( id ) {
-			this.el.data('panel-id', id);
-		},
-
-		getId : function() {
-			return this.el.data('panel-id');
-		},
-
 		content : function( newContent ) {
 			var self = this,
-				content =  self.el.find('.content');
+				content =  self.$el.find('.content');
 			if(arguments.length === 0) {
 				return content;
 			} else {
@@ -50,12 +43,24 @@ define( [ "libs/classy", "libs/zepto.min" ], function( Class ) {
 
 		title : function( newTitle ) {
 			var self = this,
-				title =  self.el.find('.title');
+				title =  self.$el.find('.title');
 			if(arguments.length === 0) {
 				return title;
 			} else {
 				title.html( newTitle );
 			}
+		},
+
+		_generateId : function() {
+			this.setId( +Date()+Math.random()*10000 << 0 );
+		},
+
+		setId : function( id ) {
+			this.$el.data('panel-id', id);
+		},
+
+		getId : function() {
+			return this.$el.data('panel-id');
 		}
 
 	});

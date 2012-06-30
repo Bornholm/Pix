@@ -1,10 +1,10 @@
 define( [	
 			"core/subscriber",
 			"core/pixelcanvas",
+			"ui/panel",
 			"libs/text!modules/templates/newproject.tpl",
-			"libs/zepto.min"
 		], 
-		function( Module, PixelCanvas, newProjectTemplate ) {
+		function( Module, PixelCanvas, Panel, newProjectTemplate ) {
 
 	var ProjectManager = Module.$extend({
 
@@ -33,10 +33,17 @@ define( [
 				panman = self.sandbox.panelsManager,
 				dom = self._getProjectCreationDom();
 
-			panel = panman.create( dom, '<span>Create new project</span>',  false, true );
+			panel = new Panel({
+				title : 'Create new project',
+				content : dom
+			});
 
-			panel.el.on('click', '.cancel-button', self._onProjectCreationCancelation.bind( self, panel ) );
-			panel.el.on('click', '.validate-button', self._onProjectCreationValidation.bind( self, panel ) );
+			panman.add( panel );
+			panman.center( panel );
+			panman.modal( panel );
+
+			panel.$el.on('click', '.cancel-button', self._onProjectCreationCancelation.bind( self, panel ) );
+			panel.$el.on('click', '.validate-button', self._onProjectCreationValidation.bind( self, panel ) );
 
 		},
 
@@ -51,7 +58,7 @@ define( [
 			var p, width, height, projectName,
 				self = this,				
 				panman = self.sandbox.panelsManager,
-				params = panel.el.find('form').serializeArray(),
+				params = panel.$el.find('form').serializeArray(),
 				len = params.length;
 
 			while(len--) {
@@ -82,7 +89,14 @@ define( [
 				height : height
 			});
 
-			panel = panman.create( project.el , '<span>'+projectName+'</span>',  true );
+			panel = new Panel({
+				content : project.el,
+				title : projectName
+			});
+
+			panman.add( panel, true );
+			panman.maximize( panel );
+			panman.draggable( panel );
 
 			self._projects.push({
 				panel : panel,

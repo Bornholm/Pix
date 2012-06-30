@@ -1,4 +1,4 @@
-define(['yajf/module'], function( Module ) {
+define(['yajf/module', 'ui/panel'], function( Module, Panel ) {
 	
 	var TodoMod = Module.$extend({
 
@@ -45,7 +45,10 @@ define(['yajf/module'], function( Module ) {
 			container.append( iframe )
 					 .append( closeButton );
 
-			panel = panman.create( container, '<span>About</span>',  false, true );
+			panel = new Panel({ content : container, title : 'About' });
+			panman.add( panel );
+			panman.center( panel );
+			panman.modal( panel );
 
 			closeButton.on('click', function() {
 				panman.remove( panel );
