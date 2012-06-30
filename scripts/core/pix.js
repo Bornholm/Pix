@@ -21,13 +21,14 @@ define( [
 			// Extensions
 			"extensions/pubsub",
 			"extensions/panelmanager",
-			"extensions/template" 
+			"extensions/tabmanager",
+			"extensions/template"
 		], 
 	function( Core, 
 			MenuMod, ProjectsManMod, ExportMod, PreviewMod,
 			ToolsMod, PencilMod, ZoomMod, EraserMod,
 			ColorsMod, TodoMod,
-			PubSubExt, PanManExt, TemplateExt ) {
+			PubSubExt, PanManExt, TabManExt, TemplateExt ) {
 
 	var Pix = Core.$extend({
 
@@ -75,6 +76,9 @@ define( [
 					right : $(window).width(),
 					bottom : Number.MAX_VALUE
 				}
+			});
+			self.registerExtension( 'tabsManager', TabManExt, {
+				container : $('#workspace')
 			});
 			self.registerExtension( 'template', TemplateExt );
 		},
