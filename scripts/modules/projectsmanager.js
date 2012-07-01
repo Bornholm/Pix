@@ -1,17 +1,15 @@
 define( [	
 			"core/subscriber",
 			"core/pixelcanvas",
-			"ui/panel",
 			"libs/text!modules/templates/newproject.tpl",
 		], 
-		function( Module, PixelCanvas, Panel, newProjectTemplate ) {
+		function( Module, PixelCanvas, newProjectTemplate ) {
 
 	var ProjectManager = Module.$extend({
 
-
 		subs : {
 			'menu:item:click' : '_onMenuItemClick',
-			'panel:focus' : '_onPanelFocus'
+			'tab:focus' : '_onTabFocus'
 		},
 
 		start : function() {
@@ -28,37 +26,30 @@ define( [
 
 		_showProjectCreationPanel : function() {
 
-			var panel,
+			var tab,
 				self = this,
-				panman = self.sandbox.panelsManager,
+				tabMan = self.sandbox.tabsManager,
 				dom = self._getProjectCreationDom();
 
-			panel = new Panel({
-				title : 'Create new project',
-				content : dom
-			});
+			tab = tabMan.add( 'Create new project', dom, true );
 
-			panman.add( panel );
-			panman.center( panel );
-			panman.modal( panel );
-
-			panel.$el.on('click', '.cancel-button', self._onProjectCreationCancelation.bind( self, panel ) );
-			panel.$el.on('click', '.validate-button', self._onProjectCreationValidation.bind( self, panel ) );
+			tab.content.on('click', '.cancel-button', self._onProjectCreationCancelation.bind( self, tab ) );
+			tab.content.on('click', '.validate-button', self._onProjectCreationValidation.bind( self, tab ) );
 
 		},
 
-		_onProjectCreationCancelation : function( panel ) {
+		_onProjectCreationCancelation : function( tab ) {
 			var self = this,
-				panman = self.sandbox.panelsManager;
-			panman.remove( panel );
+				tabMan = self.sandbox.tabsManager;
+			tabMan.remove( tab.id );
 		},
 
-		_onProjectCreationValidation : function( panel ) {
+		_onProjectCreationValidation : function( tab ) {
 
 			var p, width, height, projectName,
 				self = this,				
-				panman = self.sandbox.panelsManager,
-				params = panel.$el.find('form').serializeArray(),
+				tabMan = self.sandbox.tabsManager,
+				params = tab.content.find('form').serializeArray(),
 				len = params.length;
 
 			while(len--) {
@@ -68,20 +59,17 @@ define( [
 				p.name === "height" && (height = +p.value);
 			}
 
-			panman.remove( panel );
-
-			self._createNewProject( projectName, width, height );
+			self._createNewProject( tab, projectName, width, height );
 		},
 
 		_getProjectCreationDom : function() {
 			return this.sandbox.template.render( newProjectTemplate );
 		},
 
-		_createNewProject : function( projectName, width, height ) {
+		_createNewProject : function( tab, projectName, width, height ) {
 
 			var panel, project,
-				self = this,
-				panman = self.sandbox.panelsManager;
+				self = this;
 
 			project = new PixelCanvas({
 				name : projectName,
@@ -89,27 +77,24 @@ define( [
 				height : height
 			});
 
-			panel = new Panel({
-				content : project.el,
-				title : projectName
-			});
+			tab.content.empty();
+			tab.content.append( project.el );
 
-			panman.add( panel, true );
-			panman.maximize( panel );
-			panman.draggable( panel );
+			tab.title.html( projectName );
 
 			self._projects.push({
-				panel : panel,
+				tab : tab,
 				project : project
 			});
 
 			self.publish( 'project:new' , [project] );
+			self.publish( 'project:active', [project] );
 
 			console.log(projectName, width, height);
 		},
 
 
-		_onPanelFocus : function( panel ) {
+		_onTabFocus : function( tabId ) {
 
 			var proj,
 				self = this,
@@ -118,7 +103,7 @@ define( [
 
 			while(len--) {
 				proj = projects[len];
-				if( proj.panel === panel ) {
+				if( proj.tab.id === tabId ) {
 					self.publish( 'project:active', [proj.project] );
 					break;
 				}

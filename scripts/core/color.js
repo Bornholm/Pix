@@ -216,12 +216,24 @@ define(function() {
 		}
 	};
 
+	p.nearlyEquals = function( color, treshold ) {
+		treshold = treshold !== undefined ? treshold : 0.01;
+		return Math.abs( color._h - this._h ) <= treshold &&
+				Math.abs( color._s - this._s ) <= treshold &&
+				Math.abs( color._l - this._l ) <= treshold &&
+				Math.abs( color._a - this._a ) <= treshold;
+	}
+
 	p.equals = function( color ) {
-		return this.toHSLString( true ) === new Color( color ).toHSLString( true );
+		color = new Color( color );
+		return color._h === this._h &&
+				color._s === this._s &&
+				color._l === this._l &&
+				color._a === this._a;
 	};
 
 	p.toString = function() {
-		return this.toRGBString( true );
+		return this.toHSLString( true );
 	};	
 
 	p._parseHexaString = function( str ) {

@@ -22,6 +22,11 @@
 	text-align : right;
 }
 
+.fullSize {
+	width : 100%;
+	height : 100%;
+}
+
 .noSelect {
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -86,10 +91,11 @@
  }
 
  .c-col {
- 	margin: @topBarHeight @rightToolsWidth 0  @leftToolsWidth;
+ 	margin: 0 @rightToolsWidth 0  @leftToolsWidth;
 	position: relative;
 	z-index: 5;
 	height: 100%;
+	padding-top : @topBarHeight;
  }
 
  .l-col {
@@ -134,15 +140,21 @@ canvas {
 	border : 1px solid #ccc;
 }
 
-iframe {
+iframe.todo {
+
+	.border-box;
+	.fullSize;
+
 	border : none;
+
 }
 
 #modal {
+
+	.fullSize;
+
 	background-color : rgba(0,0,0,0.3);
 	position: fixed;
-	width : 100%;
-	height : 100%;
 	z-index : 100000;
 	display: none;
 	top : 0;
@@ -253,44 +265,54 @@ iframe {
 
 	.tabs {
 
+		@tabsHeight : 25px;
+
 		.border-box;
 
 		list-style : none;
 		display: block;
 		width : 100%;
-		height : 25px;
-		border-bottom : 1px solid #ccc;
+		height : @tabsHeight;
+		overflow : hidden;
+		background-color : whiteSmoke;
 		
 		li {
-			line-height: 25px;
+
+			line-height: @tabsHeight;
 			vertical-align: middle;
 			display: inline-block;
-			padding : 0px 20px;
+			padding : 0 20px;
 			border-right : 1px solid #ccc;
 			cursor : pointer;
 		}
 
 		li.current {
-			height : 24px;
 			border-bottom : 1px solid white;
+			background-color : white;
 		}
 	}
 
 	.content {
 
-		width : 100%;
-		height : 100%;
+		.noSelect;
 		.border-box;
+
+		width : 100%;
+		height : 97%;
 		list-style : none;
+		overflow : auto;
 
 		li {
 
-			display : none;
+			.border-box;
+
+			padding : 10px;
+			display : none;			
 
 			&.current {
 				display : block;
-				width : 100%;
-				height : 100%;
+				overflow : auto;
+				
 			}
 		}
 	}
@@ -475,15 +497,34 @@ iframe {
 
 	.color {
 
-		width: 15px;
-		height: 15px;
+		width: 30px;
+		height: 30px;
 		display: inline-block;
 		margin: 1px 1px;
 		border: 1px solid #CCC;
 		border-radius: 3px;
 		cursor : pointer;
+		position : relative;
+
+		.alpha {
+
+			background-color: whiteSmoke;
+			font-size: 9px;
+			position: absolute;
+			right: 1px;
+			min-width: 10px;
+			min-height: 10px;
+			line-height: 10px;
+			vertical-align: middle;
+			text-align: center;
+			bottom: 1px;
+			padding: 1px;
+			border-top-left-radius: 2px;
+			border-bottom-right-radius: 2px;
+		}
 		
 	}
 
 }
+
 

@@ -1,4 +1,4 @@
-define(['yajf/module', 'ui/panel'], function( Module, Panel ) {
+define(['yajf/module'], function( Module ) {
 	
 	var TodoMod = Module.$extend({
 
@@ -21,9 +21,9 @@ define(['yajf/module', 'ui/panel'], function( Module, Panel ) {
 
 		_onLinkClick : function( evt ) {
 
-			var panel,
+			var tab,
 				self = this,
-				panman = self.sandbox.panelsManager,
+				tabsMan = self.sandbox.tabsManager,
 				container = $('<div />'),
 				closeButton = $('<button />'),
 				iframe = $('<iframe />');
@@ -35,23 +35,17 @@ define(['yajf/module', 'ui/panel'], function( Module, Panel ) {
 			});
 
 			iframe.attr('src', 'todo');
-			iframe.css({
-				width : '640px',
-				height : '480px',
-				display : 'block',
-			});
+			iframe.addClass('todo');
 
 			closeButton.html('Close');
 			container.append( iframe )
 					 .append( closeButton );
 
-			panel = new Panel({ content : container, title : 'About' });
-			panman.add( panel );
-			panman.center( panel );
-			panman.modal( panel );
+
+			tab = tabsMan.add( 'About', container, true );
 
 			closeButton.on('click', function() {
-				panman.remove( panel );
+				tabsMan.remove( tab.id );
 			});
 
 		}

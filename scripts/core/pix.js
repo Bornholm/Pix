@@ -20,7 +20,6 @@ define( [
 
 			// Extensions
 			"extensions/pubsub",
-			"extensions/panelmanager",
 			"extensions/tabmanager",
 			"extensions/template"
 		], 
@@ -28,7 +27,7 @@ define( [
 			MenuMod, ProjectsManMod, ExportMod, PreviewMod,
 			ToolsMod, PencilMod, ZoomMod, EraserMod,
 			ColorsMod, TodoMod,
-			PubSubExt, PanManExt, TabManExt, TemplateExt ) {
+			PubSubExt, TabManExt, TemplateExt ) {
 
 	var Pix = Core.$extend({
 
@@ -50,7 +49,7 @@ define( [
 			self.registerModule( 'menu', MenuMod );
 			self.registerModule( 'projects', ProjectsManMod );
 			self.registerModule( 'export', ExportMod );
-			self.registerModule( 'preview', PreviewMod );
+			//self.registerModule( 'preview', PreviewMod );
 
 			// Tools
 			self.registerModule( 'toolbox', ToolsMod );
@@ -67,16 +66,6 @@ define( [
 		_registerExtensions : function() {
 			var self = this;
 			self.registerExtension( 'events', PubSubExt );
-			self.registerExtension( 'panelsManager', PanManExt, {
-				container : $('#workspace'),
-				modalLayer : $('#modal'),
-				bounds : {
-					left : 87,
-					top : 27,
-					right : $(window).width(),
-					bottom : Number.MAX_VALUE
-				}
-			});
 			self.registerExtension( 'tabsManager', TabManExt, {
 				container : $('#workspace')
 			});
@@ -99,13 +88,13 @@ define( [
 							{ label : 'Save', disabled : true  },
 							{ label : 'Export to PNG', id : 'export'  }
 						]
-					},
+					}/*,
 					{ 
 						label : 'View',
 						items : [
 							{ label : 'Show Preview', id : 'preview'  }
 						]
-					}
+					}*/
 
 				]
 			});

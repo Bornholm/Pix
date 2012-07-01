@@ -27,6 +27,7 @@ define(['ui/widget', 'core/color'], function( Widget, Color ){
 				curr = document.createElement('div');
 				curr.className = 'color';
 				curr.style['background-color'] = colors[i];
+				curr.innerHTML = '<span class="alpha">'+colors[i].alpha().toFixed(1)+'</span>';
 				elements.push( curr );
 			}
 
@@ -69,7 +70,7 @@ define(['ui/widget', 'core/color'], function( Widget, Color ){
 			color = new Color( color );
 			for ( i = 0; i < len; ++i ) {
 				c = colors[i];
-				if( c.equals( color ) ) {
+				if( c.nearlyEquals( color ) ) {
 					return i;
 				}
 			}
