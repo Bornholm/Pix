@@ -118,10 +118,6 @@
 	Elements 
 ****************/
 
-* {
-	.noMarginAndPadding;
-}
-
 html, body { 
 	height: 100%; 
 }
@@ -140,7 +136,7 @@ canvas {
 	border : 1px solid #ccc;
 }
 
-iframe.todo {
+iframe {
 
 	.border-box;
 	.fullSize;
@@ -267,6 +263,7 @@ iframe.todo {
 
 		@tabsHeight : 25px;
 
+		.noMarginAndPadding;
 		.border-box;
 
 		list-style : none;
@@ -276,7 +273,7 @@ iframe.todo {
 		overflow : hidden;
 		background-color : whiteSmoke;
 		
-		li {
+		& > li {
 
 			line-height: @tabsHeight;
 			vertical-align: middle;
@@ -294,20 +291,21 @@ iframe.todo {
 
 	.content {
 
-		.noSelect;
 		.border-box;
+		.noMarginAndPadding;
 
 		width : 100%;
 		height : 97%;
 		list-style : none;
 		overflow : auto;
 
-		li {
+		& > li {
 
 			.border-box;
 
 			padding : 10px;
-			display : none;			
+			display : none;	
+			height: 100%;		
 
 			&.current {
 				display : block;
@@ -322,6 +320,7 @@ iframe.todo {
 #left-tools {
 
 	.l-col;
+	.noSelect;
 
 	padding: @topBarHeight + 10px 10px 0px 10px;
 

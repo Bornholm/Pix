@@ -87,12 +87,28 @@ define( [
 				project : project
 			});
 
+			self._fillAvailableSpace( project, tab );
+
 			self.publish( 'project:new' , [project] );
 			self.publish( 'project:active', [project] );
 
 			console.log(projectName, width, height);
 		},
 
+		_fillAvailableSpace : function( pixelCanvas, tab ) {
+
+			var vZoom, hZoom,
+				offset = tab.content.offset(),
+				cWidth = pixelCanvas.width(),
+				cHeight = pixelCanvas.height();
+
+			if( cWidth < offset.width && cHeight < offset.height ) {
+				vZoom = offset.height / cHeight >> 0;
+				hZoom = offset.width / cWidth >> 0;
+				pixelCanvas.zoom( vZoom > hZoom ? hZoom : vZoom );
+			}
+
+		},
 
 		_onTabFocus : function( tabId ) {
 

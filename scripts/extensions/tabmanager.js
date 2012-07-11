@@ -12,7 +12,7 @@ define(["yajf/extension"], function( Extension ) {
 
 			var self = this;
 
-			self._container = $(opts.container);
+			self._$container = $(opts.container);
 
 			self._initLayout();
 			self._initEventHandlers();
@@ -27,27 +27,25 @@ define(["yajf/extension"], function( Extension ) {
 
 		_initLayout : function() {
 
-			var self = this,
-				tabs = $('<ul />'),
-				content = $('<ul />'),
-				container = self._container;
+			var tabs, content,
+				self = this,
+				container = self._$container;
 
-			container.empty();
-
-			tabs.addClass('tabs');
-
-			content.addClass('content');
-
+			tabs = container.find('ul.tabs');
+			tabs.length === 0 && ( tabs = $('<ul />').addClass('tabs') );
+			content = container.find('ul.content');
+			content.length === 0 && ( content = $('<ul />').addClass('content') );
+			
 			container.append( tabs )
 					 .append( content );
 
-			self._tabs = tabs;
-			self._content = content;
+			self._$tabs = tabs;
+			self._$content = content;
 		},
 
 		_initEventHandlers : function() {
 			var self = this,
-				container = self._container;
+				container = self._$container;
 			container.on('click', '.tabs li', self._onTabClick.bind( self ) );
 		},
 
@@ -73,7 +71,7 @@ define(["yajf/extension"], function( Extension ) {
 			var content, title,
 				self = this,
 				pubsub = self.sandbox.events,
-				container = self._container;
+				container = self._$container;
 
 			if( id !== undefined ) {
 				container.find( '.current' ).removeClass( 'current' );
@@ -102,8 +100,8 @@ define(["yajf/extension"], function( Extension ) {
 			titleItem.data( 'tab-id', id );
 			contentItem.data( 'tab-id', id );
 
-			self._tabs.append( titleItem );
-			self._content.append( contentItem );
+			self._$tabs.append( titleItem );
+			self._$content.append( contentItem );
 
 			if( isCurrent ) {
 				self._current( id );
@@ -122,7 +120,7 @@ define(["yajf/extension"], function( Extension ) {
 
 			var current, prevId,
 				self = this,
-				container = self._container;
+				container = self._$container;
 			current = container.find( 'li[data-tab-id="'+id+'"]' );
 			if( current.hasClass('current') ) {
 				prevId = current.prev().data('tab-id');

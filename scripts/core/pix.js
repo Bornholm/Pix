@@ -6,6 +6,7 @@ define( [
 			'modules/projectsmanager',
 			'modules/export',
 			'modules/preview',
+			'modules/home',
 			
 
 			// Tools
@@ -24,7 +25,7 @@ define( [
 			"extensions/template"
 		], 
 	function( Core, 
-			MenuMod, ProjectsManMod, ExportMod, PreviewMod,
+			MenuMod, ProjectsManMod, ExportMod, PreviewMod, HomeMod,
 			ToolsMod, PencilMod, ZoomMod, EraserMod,
 			ColorsMod, TodoMod,
 			PubSubExt, TabManExt, TemplateExt ) {
@@ -60,6 +61,7 @@ define( [
 			// Others
 			self.registerModule( 'colors', ColorsMod );
 			self.registerModule( 'todo', TodoMod );
+			self.registerModule( 'home', HomeMod );
 
 		},
 
@@ -88,13 +90,7 @@ define( [
 							{ label : 'Save', disabled : true  },
 							{ label : 'Export to PNG', id : 'export'  }
 						]
-					}/*,
-					{ 
-						label : 'View',
-						items : [
-							{ label : 'Show Preview', id : 'preview'  }
-						]
-					}*/
+					}
 
 				]
 			});
@@ -123,6 +119,8 @@ define( [
 			self.startModule( 'todo', {
 				link : $("#logo")
 			});
+
+			self.startModule( 'home' );
 
 		}
 
