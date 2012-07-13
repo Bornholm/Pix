@@ -39,4 +39,4 @@ Libraries
 Screenshots
 ===========
 
-![Very First Sprite](https://github.com/Bornholm/Pix/raw/master/images/screenshot_mario.png)
+![Very First Sprite](https://github.com/Bornholm/Pix/raw/master/screenshot.png)
