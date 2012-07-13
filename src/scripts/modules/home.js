@@ -21,7 +21,7 @@ define(['yajf/module', 'core/events.mixin', 'libs/marked'], function( Module, Ev
 			tabMan.add( 'Home', self.$el, true );
 
 			self.bindEvents();
-			self._loadMarkdown( 'README' );
+			self._loadMarkdown( '../README' );
 		},
 
 		_onMarkdownLinkClick : function( evt ) {

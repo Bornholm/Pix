@@ -91,7 +91,6 @@ define( [
 							{ label : 'Export to PNG', id : 'export'  }
 						]
 					}
-
 				]
 			});
 

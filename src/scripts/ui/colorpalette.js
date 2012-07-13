@@ -70,7 +70,7 @@ define(['ui/widget', 'core/color'], function( Widget, Color ){
 			color = new Color( color );
 			for ( i = 0; i < len; ++i ) {
 				c = colors[i];
-				if( c.nearlyEquals( color ) ) {
+				if( c.equals( color, 0.01 ) ) {
 					return i;
 				}
 			}

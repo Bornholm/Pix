@@ -139,10 +139,10 @@ define(function() {
 	p.toHSLA = function() {
 		var self = this;
 		return  {
-			h : +(self._h).toFixed(2),
-			s : +(self._s).toFixed(2),
-			l : +(self._l).toFixed(2),
-			a : +(self._a).toFixed(2)
+			h : +(self._h),
+			s : +(self._s),
+			l : +(self._l),
+			a : +(self._a)
 		};
 	};
 
@@ -165,9 +165,9 @@ define(function() {
 							color = Color.RGBToHSL( color.r, color.g, color.b );
 						case Color.HSL:
 						case Color.HSLA:
-							self._h = +(color.h).toFixed(2);
-							self._s = +(color.s).toFixed(2);
-							self._l = +(color.l).toFixed(2);
+							self._h = +(color.h);
+							self._s = +(color.s);
+							self._l = +(color.l);
 							isOk = true;
 					};
 				}
@@ -195,17 +195,17 @@ define(function() {
 
 	p.fromHSL = function( h, s, l ) {
 		var self = this;
-		self._h = +h.toFixed(2);
-		self._s = +s.toFixed(2);
-		self._l = +l.toFixed(2);
+		self._h = +h;
+		self._s = +s;
+		self._l = +l;
 	};
 
 	p.fromRGB = function( r, g, b ) {
 		var self = this,
 			hsl = Color.RGBToHSL( r, g, b );
-		self._h = +hsl.h.toFixed(2);
-		self._s = +hsl.s.toFixed(2);
-		self._l = +hsl.l.toFixed(2);
+		self._h = +hsl.h;
+		self._s = +hsl.s;
+		self._l = +hsl.l;
 	};
 
 	p.alpha = function( a ) {
@@ -216,20 +216,13 @@ define(function() {
 		}
 	};
 
-	p.nearlyEquals = function( color, treshold ) {
-		treshold = treshold !== undefined ? treshold : 0.01;
-		return Math.abs( color._h - this._h ) <= treshold &&
-				Math.abs( color._s - this._s ) <= treshold &&
-				Math.abs( color._l - this._l ) <= treshold &&
-				Math.abs( color._a - this._a ) <= treshold;
-	}
-
-	p.equals = function( color ) {
+	p.equals = function( color, threshold ) {
 		color = new Color( color );
-		return color._h === this._h &&
-				color._s === this._s &&
-				color._l === this._l &&
-				color._a === this._a;
+		threshold = threshold !== undefined ? threshold : 0;
+		return Math.abs( color._h - this._h ) <= threshold &&
+				Math.abs( color._s - this._s ) <= threshold &&
+				Math.abs( color._l - this._l ) <= threshold &&
+				Math.abs( color._a - this._a ) <= threshold;
 	};
 
 	p.toString = function() {
@@ -303,7 +296,7 @@ define(function() {
 		match = str.match( hslPattern );
 		if( match ) {
 			color = {
-				h : +match[1],
+				h : +match[1]/360,
 				s : +match[3]/100,
 				l : +match[4]/100
 			};
@@ -311,7 +304,7 @@ define(function() {
 			match = str.match( hslaPattern );
 			if( match ) {
 				color = {
-					h : +match[1],
+					h : +match[1]/360,
 					s : +match[3]/100,
 					l : +match[4]/100,
 					a : +match[5]
