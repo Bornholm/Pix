@@ -7,7 +7,7 @@ define(['ui/widget', 'core/color'], function( Widget, Color, undef ) {
 		widgetClass : "colorpicker",
 
 		events : {
-			'change .alpha-range': "_updateAlphaValue",
+			'change .alpha-range': "_onAlphaSelectorChange",
 			'colorpicker:change' : "_updateCurrentColor",
 			'mouseout' : "_stopMovingCursors",
 			'mouseup .color-map' : "_stopMovingColorMapCursor",
@@ -337,6 +337,18 @@ define(['ui/widget', 'core/color'], function( Widget, Color, undef ) {
 		},
 
 		_updateAlphaValue : function() {
+				var alpha,
+				self = this,
+				alphaRange = self._alphaRange,
+				alphaValue = self._alphaValue;
+
+			alpha = self._color.alpha();
+			alphaRange.val( alpha );
+			alphaValue.html( alpha.toPrecision(1) );
+		},
+
+		_onAlphaSelectorChange : function() {
+
 			var alpha,
 				self = this,
 				alphaRange = self._alphaRange,
@@ -346,6 +358,7 @@ define(['ui/widget', 'core/color'], function( Widget, Color, undef ) {
 			self._color.alpha( alpha );
 			alphaValue.html( alpha.toPrecision(1) );
 			self._dispatchColorChange();
+
 		},
 
 		_dispatchColorChange : function() {

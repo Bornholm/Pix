@@ -29,11 +29,12 @@ Others
 Libraries
 =========
 
-* [Require](http://requirejs.org/)
-* [Zepto](http://zeptojs.com/)
-* [Mustache](http://mustache.github.com/)
-* [Marked](https://github.com/chjj/marked)
-* [LessCSS](http://lesscss.org/)
+* [Require](http://requirejs.org/) - _AMD Loader_
+* [Zepto](http://zeptojs.com/) - _DOM Manipulation Lib_
+* [Mustache](http://mustache.github.com/) - _Templating Lib_
+* [Marked](https://github.com/chjj/marked) - _Text to HTML Lib_
+* [LessCSS](http://lesscss.org/) - _CSS Lib_
+* [Jasmine](http://pivotal.github.com/jasmine/) - _Testing Lib_
 
 
 Screenshots
