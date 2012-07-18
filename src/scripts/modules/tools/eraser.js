@@ -1,4 +1,4 @@
-define(['modules/tools/pencil'], function( Pencil ) {
+define(['modules/tools/pencil', 'core/color'], function( Pencil, Color ) {
 	
 	var Eraser = Pencil.$extend({
 
@@ -11,7 +11,15 @@ define(['modules/tools/pencil'], function( Pencil ) {
 		start : function( opts ) {
 			var self = this;
 			self.$super( opts );
-			self._eraseMode = true;
+			self._color = new Color('rgba(0,0,0,0)');
+		},
+
+		_dispatchColorUse : function() {
+			//noop
+		},
+
+		_onColorSelected : function() {
+			//noop
 		}
 
 	});

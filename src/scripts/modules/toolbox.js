@@ -11,6 +11,7 @@ define( [ "core/subscriber", "libs/zepto.min" ], function( Module ) {
 
 		start : function( opts ) {
 			var self = this;
+			self.$super( opts );
 			opts = opts || {};
 			self._tools = {};
 			self._buttonsContainer = opts.buttonsContainer;

@@ -3,7 +3,8 @@ define(['core/subscriber', 'ui/colorpicker', 'ui/colorpalette'], function( Modul
 	var ColorsModule = Module.$extend({
 
 		subs : {
-			'project:active' : '_onActiveProjectChange'
+			'project:active' : '_onActiveProjectChange',
+			'color:use' : '_onColorUse'
 		},
 
 		start : function( opts ) {
@@ -11,12 +12,12 @@ define(['core/subscriber', 'ui/colorpicker', 'ui/colorpalette'], function( Modul
 			var self = this;
 
 			opts = opts || {};
+			self.$super( opts );
+
 			self._container = $(opts.container);
-			self._colors = [];
 
 			self._initView();
 			self._initEventsHandler();
-			self._onPixelCanvasChangeBinded = self._onPixelCanvasChange.bind( self );
 		},
 
 		_initView : function() {
@@ -41,9 +42,8 @@ define(['core/subscriber', 'ui/colorpicker', 'ui/colorpalette'], function( Modul
 		},
 
 		_colorPickerChangeHandler : function( evt, color ) {
-			var self = this,
-				project = self._activeProject;
-			project && project.color( color );
+			var events = this.sandbox.events;
+			events.publish( "color:selected", [color] );
 		},
 
 		_onPaletteSelection : function( evt, color ) {
@@ -51,19 +51,14 @@ define(['core/subscriber', 'ui/colorpicker', 'ui/colorpalette'], function( Modul
 		},
 
 		_onActiveProjectChange : function( project ) {
-
 			var self = this,
 				cp = self._colorpicker;
 			self._activeProject &&	self._activeProject.$el.off( 'pixelcanvas:change', self._onPixelCanvasChangeBinded );
 			self._activeProject = project;
-			project.$el.on( 'pixelcanvas:change', self._onPixelCanvasChangeBinded );
-			project.color( cp.color() );
 		},
 
-		_onPixelCanvasChange : function() {
-			var self = this,
-				project = self._activeProject;
-			self._palette.addColor( project.color() );
+		_onColorUse : function( color ) {
+			this._palette.addColor( color );
 		}
 
 	});

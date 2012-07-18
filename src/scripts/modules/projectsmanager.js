@@ -12,8 +12,9 @@ define( [
 			'tab:focus' : '_onTabFocus'
 		},
 
-		start : function() {
+		start : function( opts ) {
 			var self = this;
+			self.$super( opts );
 			self._projects = [];
 		},
 

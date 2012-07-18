@@ -15,6 +15,7 @@ define(['core/subscriber'], function( Module ) {
 
 		start : function( opts ) {
 			var self = this;
+			self.$super( opts );
 			self._isActive = false;
 			self._toolOptions = $('<div />');
 			self._registerTool();

@@ -47,6 +47,7 @@ define(['ui/widget', 'core/color'], function( Widget, Color, undef ) {
 			if( arguments.length > 0 ) {
 				self._color = new Color( color );
 				self._update();
+				self._dispatchColorChange();
 			} else {
 				return self._color;
 			}

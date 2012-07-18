@@ -1,4 +1,5 @@
-define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color'], function( Class, Widget, AsyncTask, Color ) {
+define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color', 'core/actionmanager', 'core/action'],
+ function( Class, Widget, AsyncTask, Color, ActionManager, Action ) {
 
 	"use strict";
 
@@ -62,18 +63,79 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color'], function( C
 			self.clear();
 		},
 
-		setPixel : function( x, y, clear ) {
-			var self = this,
+		setPixel : function( x, y, color ) {
+
+
+			var pixels, data, i, len,
+				self = this,
 				zoom = self._zoom,
 				context = self.getContext(),
 				zContext = self.getContext( true );
+
+			color = color.toRGBA();
+
 			x = x/zoom | 0; //  x | 0 == Math.floor(x)
 			y = y/zoom | 0;
-			context[clear ?  'clearRect' : 'fillRect' ]( x, y, 1, 1 );
-			zContext[clear ?  'clearRect' : 'fillRect' ]( x*zoom, y*zoom, zoom, zoom );
+
+			pixels = context.getImageData( x, y, 1, 1 );
+			data = pixels.data;
+
+			// 0<->1 => 0<->255
+			color.a = (color.a*255) >> 0; // n >> 0 === Math.round( n )
+
+			for( i = 0, len = data.length; i < len; i += 4 ) {
+				data[i] = color.r;
+				data[i+1] = color.g;
+				data[i+2] = color.b;
+				data[i+3] = color.a;
+			};
+
+			context.putImageData( pixels, x, y );
+
+			pixels = zContext.getImageData( x*zoom, y*zoom, zoom, zoom );
+			data = pixels.data;
+
+			for( i = 0, len = data.length; i < len; i += 4 ) {
+				data[i] = color.r;
+				data[i+1] = color.g;
+				data[i+2] = color.b;
+				data[i+3] = color.a;
+			};
+
+			zContext.putImageData( pixels, x*zoom, y*zoom );
+
 		},
 
-		line : function( x, y, x2, y2, clear ) { // From https://github.com/skyboy/AS3-Utilities/blob/master/skyboy/utils/efla.as
+		getPixel : function( x, y ) {
+
+			var pixels, data, i, len,
+				color = {},
+				self = this,
+				zoom = self._zoom,
+				context = self.getContext();
+
+			x = x/zoom | 0; //  x | 0 == Math.floor(x)
+			y = y/zoom | 0;
+
+			pixels = context.getImageData( x, y, 1, 1 );
+			data = pixels.data;
+
+			color.r = data[0];
+			color.g = data[1];
+			color.b = data[2];
+			color.a = data[3];
+
+			return new Color( color );
+
+		},
+
+
+		// return [x, y, x1, y1, ... xn, yn];
+		getLinePoints : function( x, y, x2, y2 ) {
+			
+		},
+
+		line : function( x, y, x2, y2, color ) { // From https://github.com/skyboy/AS3-Utilities/blob/master/skyboy/utils/efla.as
 			
 			var id, inc, multDiff,
 				i = 0,
@@ -94,25 +156,25 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color'], function( C
 				multDiff = !shortLen ? longLen : longLen / shortLen;
 
 				if (id) {
-					self.setPixel(x, y, clear);
+					self.setPixel(x, y, color);
 					i += inc;
 					if (--id) {
-						self.setPixel(x + i * multDiff, y + i, clear);
+						self.setPixel(x + i * multDiff, y + i, color);
 						i += inc;
 						if (--id) {
-							self.setPixel(x + i * multDiff, y + i, clear);
+							self.setPixel(x + i * multDiff, y + i, color);
 							i += inc;
 						}
 					}
 				}
 				while (i != shortLen) {
-					self.setPixel(x + i * multDiff, y + i, clear);
+					self.setPixel(x + i * multDiff, y + i, color);
 					i += inc;
-					self.setPixel(x + i * multDiff, y + i, clear);
+					self.setPixel(x + i * multDiff, y + i, color);
 					i += inc;
-					self.setPixel(x + i * multDiff, y + i, clear);
+					self.setPixel(x + i * multDiff, y + i, color);
 					i += inc;
-					self.setPixel(x + i * multDiff, y + i, clear);
+					self.setPixel(x + i * multDiff, y + i, color);
 					i += inc;
 				}
 			} else {
@@ -126,25 +188,25 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color'], function( C
 				multDiff = !longLen ? shortLen : shortLen / longLen;
 
 				if (id) {
-					self.setPixel(x, y, clear);
+					self.setPixel(x, y, color);
 					i += inc;
 					if (--id) {
-						self.setPixel(x + i, y + i * multDiff, clear);
+						self.setPixel(x + i, y + i * multDiff, color);
 						i += inc;
 						if (--id) {
-							self.setPixel(x + i, y + i * multDiff, clear);
+							self.setPixel(x + i, y + i * multDiff, color);
 							i += inc;
 						}
 					}
 				}
 				while (i != longLen) {
-					self.setPixel(x + i, y + i * multDiff, clear);
+					self.setPixel(x + i, y + i * multDiff, color);
 					i += inc;
-					self.setPixel(x + i, y + i * multDiff, clear);
+					self.setPixel(x + i, y + i * multDiff, color);
 					i += inc;
-					self.setPixel(x + i, y + i * multDiff, clear);
+					self.setPixel(x + i, y + i * multDiff, color);
 					i += inc;
-					self.setPixel(x + i, y + i * multDiff, clear);
+					self.setPixel(x + i, y + i * multDiff, color);
 					i += inc;
 				}
 			}
@@ -214,6 +276,8 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color'], function( C
 
 			self.$super();
 
+			self._actionManager = new ActionManager();
+
 			opts = opts || {};
 
 			self._width =  opts.width || 640;
@@ -225,7 +289,6 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color'], function( C
 			self._initContainer();
 			self.newLayer();
 
-			self.color( new Color() );
 			self.zoom(1);
 			
 		},
@@ -252,6 +315,14 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color'], function( C
 
 		getLayers : function() {
 			return this._layers;
+		},
+
+		undo : function() {
+			this._actionManager.undo();
+		},
+
+		redo : function() {
+			this._actionManager.redo();
 		},
 
 		_initContainer : function() {
@@ -315,41 +386,28 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color'], function( C
 			self._background = canvas;
 		},
 
-		// Drawing methods
+		setPixel : function( x, y, color ) {
 
-		color : function( color ) {
-			var self = this;
-			if( arguments.length === 0 ) {
-				return self._color;
-			} else {
-				color = new Color( color );
-				self._color = color;
-				self._updateColor();
-			}
+			var action,
+				self = this,
+				activeLayer = this.getActiveLayer(),
+				prevColor = activeLayer.getPixel( x, y );
+
+			action = new Action(
+				{ method : "setPixel", context : self, args : [x, y, color]  },
+				{ method : "setPixel", context : self, args : [x, y, prevColor]  }
+			);
+
+			activeLayer.setPixel( x, y, color );
+
+			this._actionManager.register( action );
+
+			this._dispatchChange( 'pixel', x, y, color );
 		},
 
-		_updateColor : function() {
-
-			var self = this,
-				colorStr = self._color.toRGBString( true ),
-				layers = self.getLayers(),
-				len = layers.length;
-
-			while(len--) {
-				layers[len].getContext().fillStyle = colorStr;
-				layers[len].getContext( true ).fillStyle = colorStr;
-			}
-
-		},
-
-		setPixel : function( x, y, eraseMode ) {
-			this.getActiveLayer().setPixel( x, y, eraseMode );
-			this._dispatchChange( 'pixel', x, y, eraseMode );
-		},
-
-		line : function( x, y, x2, y2, eraseMode ) {
-			this.getActiveLayer().line( x, y, x2, y2, eraseMode );
-			this._dispatchChange( 'line', x, y, x2, y2, eraseMode );
+		line : function( x, y, x2, y2, color ) {
+			this.getActiveLayer().line( x, y, x2, y2, color );
+			this._dispatchChange( 'line', x, y, x2, y2, color );
 		},
 
 		width : function( w ) {

@@ -7,6 +7,7 @@ define( [
 			'modules/export',
 			'modules/preview',
 			'modules/home',
+			'modules/history',
 			
 
 			// Tools
@@ -25,7 +26,7 @@ define( [
 			"extensions/template"
 		], 
 	function( Core, 
-			MenuMod, ProjectsManMod, ExportMod, PreviewMod, HomeMod,
+			MenuMod, ProjectsManMod, ExportMod, PreviewMod, HomeMod, HistoryMod,
 			ToolsMod, PencilMod, ZoomMod, EraserMod,
 			ColorsMod, TodoMod,
 			PubSubExt, TabManExt, TemplateExt ) {
@@ -62,6 +63,7 @@ define( [
 			self.registerModule( 'colors', ColorsMod );
 			self.registerModule( 'todo', TodoMod );
 			self.registerModule( 'home', HomeMod );
+			self.registerModule( 'history', HistoryMod );
 
 		},
 
@@ -90,9 +92,17 @@ define( [
 							{ label : 'Save', disabled : true  },
 							{ label : 'Export to PNG', id : 'export'  }
 						]
+					},
+					{
+						label : 'Edit',
+						items : [
+							{ label : 'Undo', id : "undo" },
+							{ label : 'Redo', id : "redo" }
+						]
 					}
 				]
 			});
+
 
 
 
@@ -120,6 +130,7 @@ define( [
 			});
 
 			self.startModule( 'home' );
+			self.startModule( 'history' );
 
 		}
 

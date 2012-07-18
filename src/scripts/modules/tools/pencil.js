@@ -1,4 +1,4 @@
-define(['modules/tools/toolbase'], function( ToolBase ) {
+define(['modules/tools/toolbase', 'core/color'], function( ToolBase, Color ) {
 	
 	var Pen = ToolBase.$extend({
 
@@ -10,12 +10,11 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 
 		start : function( opts ) {
 
-			var self = this,
-				events = self.sandbox.events;
+			var self = this;
 
 			self.$super( opts );
 
-			self._eraseMode = false;
+			self._color = new Color();
 			self._isDrawing = false,
 			self._prevPos = {};
 			self._onDrawBinded = self._onDraw.bind( self );
@@ -23,6 +22,13 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 			self._onDrawingBinded = self._onDrawing.bind( self );
 			self._onPixelClickBinded = self._onPixelClick.bind( self );
 
+			self._initEvents();
+		},
+
+		_initEvents : function() {
+			var self = this,
+				events = self.sandbox.events;
+			events.subscribe('color:selected', self._onColorSelected, self );
 		},
 
 		activate : function() {
@@ -55,13 +61,14 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 			coords = project.globalToLocal( evt.pageX, evt.pageY, evt.srcElement );
 
 			if( evt.shiftKey && lineOrigin ) {
-				project.line( lineOrigin.x, lineOrigin.y, coords.x, coords.y, self._eraseMode );
+				project.line( lineOrigin.x, lineOrigin.y, coords.x, coords.y, self._color );
+				self._dispatchColorUse();
 			} else {
-				project.setPixel( coords.x, coords.y , self._eraseMode );				
+				project.setPixel( coords.x, coords.y , self._color );
+				self._dispatchColorUse();			
 			}
 
 			self._lineOrigin = coords;
-			
 			
 		},
 
@@ -74,9 +81,10 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 
 			if( self._isDrawing ) {
 				coords = project.globalToLocal( evt.pageX, evt.pageY, evt.srcElement );
-				project.line( coords.x, coords.y, prevPos.x, prevPos.y, self._eraseMode );
+				project.line( coords.x, coords.y, prevPos.x, prevPos.y, self._color );
 				prevPos.x = coords.x;
 				prevPos.y = coords.y;
+				self._dispatchColorUse();
 			}
 
 			return false;
@@ -95,7 +103,18 @@ define(['modules/tools/toolbase'], function( ToolBase ) {
 			self._isDrawing = true;
 			self._onDraw( evt );
 			return false;
-		}
+		},
+
+		_onColorSelected : function( color ) {
+			this._color = color;
+		},
+
+
+		_dispatchColorUse : function() {
+			var self = this,
+				events = self.sandbox.events;
+			events.publish('color:use', [self._color] );
+		},
 
 
 	});
