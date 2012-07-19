@@ -130,86 +130,42 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color', 'core/action
 		},
 
 
-		// return [x, y, x1, y1, ... xn, yn];
-		getLinePoints : function( x, y, x2, y2 ) {
-			
+		setLine : function( x0, y0, x1, y1, color ) {
+			var i, len,
+				self = this,
+				points = self.getLinePoints( x0, y0, x1, y1 );
+
+			for( i = 0, len = points.length; i < len; i += 2 ) {
+				self.setPixel( points[i], points[i+1], color );
+			}
+
 		},
 
-		line : function( x, y, x2, y2, color ) { // From https://github.com/skyboy/AS3-Utilities/blob/master/skyboy/utils/efla.as
-			
-			var id, inc, multDiff,
-				i = 0,
-				self = this,
-				shortLen = y2 - y,
-				longLen = x2 - x;
+		getLinePixels : function( x1, y1, x2, y2 ) {
 
-			if (!longLen) if(!shortLen) return;
 
-			if ( (shortLen ^ (shortLen >> 31)) - (shortLen >> 31) > (longLen ^ (longLen >> 31)) - (longLen >> 31)) {
-				if (shortLen < 0) {
-					inc = -1;
-					id = -shortLen % 4;
-				} else {
-					inc = 1;
-					id = shortLen % 4;
-				}
-				multDiff = !shortLen ? longLen : longLen / shortLen;
 
-				if (id) {
-					self.setPixel(x, y, color);
-					i += inc;
-					if (--id) {
-						self.setPixel(x + i * multDiff, y + i, color);
-						i += inc;
-						if (--id) {
-							self.setPixel(x + i * multDiff, y + i, color);
-							i += inc;
-						}
-					}
-				}
-				while (i != shortLen) {
-					self.setPixel(x + i * multDiff, y + i, color);
-					i += inc;
-					self.setPixel(x + i * multDiff, y + i, color);
-					i += inc;
-					self.setPixel(x + i * multDiff, y + i, color);
-					i += inc;
-					self.setPixel(x + i * multDiff, y + i, color);
-					i += inc;
-				}
-			} else {
-				if (longLen < 0) {
-					inc = -1;
-					id = -longLen % 4;
-				} else {
-					inc = 1;
-					id = longLen % 4;
-				}
-				multDiff = !longLen ? shortLen : shortLen / longLen;
+		},
 
-				if (id) {
-					self.setPixel(x, y, color);
-					i += inc;
-					if (--id) {
-						self.setPixel(x + i, y + i * multDiff, color);
-						i += inc;
-						if (--id) {
-							self.setPixel(x + i, y + i * multDiff, color);
-							i += inc;
-						}
-					}
-				}
-				while (i != longLen) {
-					self.setPixel(x + i, y + i * multDiff, color);
-					i += inc;
-					self.setPixel(x + i, y + i * multDiff, color);
-					i += inc;
-					self.setPixel(x + i, y + i * multDiff, color);
-					i += inc;
-					self.setPixel(x + i, y + i * multDiff, color);
-					i += inc;
-				}
+		// From http://free.pages.at/easyfilter/bresenham.html
+		// return [x0, y0, x1, y1, ... xn, yn];
+		getLinePoints : function( x0, y0, x1, y1 ) {
+
+			var e2,
+				points = [],
+				dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1,
+				dy = Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1, 
+				err = (dx>dy ? dx : -dy) >> 1;
+
+			while (true) {
+				points.push( x0, y0 );
+				if ( x0 === x1 && y0 === y1 ) break;
+				e2 = err;
+				if ( e2 >= -dx ) { err -= dy; x0 += sx; }
+				if ( e2 <= dy ) { err += dx; y0 += sy; }
 			}
+
+			return points;
 
 		},
 
@@ -406,7 +362,8 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color', 'core/action
 		},
 
 		line : function( x, y, x2, y2, color ) {
-			this.getActiveLayer().line( x, y, x2, y2, color );
+
+			this.getActiveLayer().setLine( x, y, x2, y2, color );
 			this._dispatchChange( 'line', x, y, x2, y2, color );
 		},
 

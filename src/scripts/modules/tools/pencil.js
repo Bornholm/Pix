@@ -79,7 +79,7 @@ define(['modules/tools/toolbase', 'core/color'], function( ToolBase, Color ) {
 				prevPos = self._prevPos,
 				project = self._activeProject;
 
-			if( self._isDrawing ) {
+			if( self._isDrawing && prevPos.x !== undefined && prevPos.y !== undefined ) {
 				coords = project.globalToLocal( evt.pageX, evt.pageY, evt.srcElement );
 				project.line( coords.x, coords.y, prevPos.x, prevPos.y, self._color );
 				prevPos.x = coords.x;
