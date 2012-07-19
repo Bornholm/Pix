@@ -356,7 +356,7 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color', 'core/action
 
 			layer.setPixels( points, color );
 
-			this._actionManager.register( action );
+			this._actionManager.register( action, true );
 
 			self._dispatchChange( 'line', x0, y0, x1, y1, color );
 		},

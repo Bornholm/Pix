@@ -2,6 +2,34 @@ define(['core/action'], function() {
 
 	var p;
 
+	/****************
+	 * ActionStack
+	 ****************/
+
+	var ActionStack = function() {
+		this._actions = []
+	};
+
+	p = ActionStack.prototype;
+
+	p.add = function( action ) {
+		this._actions.push( action );
+	};
+
+	p.redo = function() {
+		var i, actions = this._actions;
+		for( i = actions.length-1; i >= 0; --i ) {
+			actions[i].redo();
+		}
+	};
+
+	p.undo = function() {
+		var i, actions = this._actions;
+		for( i = actions.length-1; i >= 0; --i ) {
+			actions[i].undo();
+		}
+	};
+
 	/******************
 	 *	ActionManager
 	 ******************/
@@ -10,14 +38,49 @@ define(['core/action'], function() {
 		var self = this;
 		self._redo = [];
 		self._undo = [];
+		self._currentStack = new ActionStack();
 		self._ignoreMode = false;
 	};
 
 	p = ActionManager.prototype;
 
-	p.register = function( action ) {
-		!this._ignoreMode && this._undo.push( action );
+	p.register = function( action, stack ) {
+
+		var lastAction,
+			self = this,
+			undo = self._undo;
+
+		stack = stack !== undefined ? stack : false;
+
+		if( !self._ignoreMode ) {
+
+			if( stack ) {
+				if( undo.length >= 1 ) {
+					lastAction = undo[undo.length-1];
+					if( lastAction instanceof ActionStack ) {
+						lastAction.add( action );
+					} else {
+						lastAction = new ActionStack();
+						lastAction.add( action );
+						undo.push( lastAction );
+					}
+				} else {
+					lastAction = new ActionStack();
+					lastAction.add( action );
+					undo.push( lastAction );
+				}
+			
+			} else {
+				undo.push( action );
+			}
+
+			console.log( action, stack );
+		}
+
+		
 	};
+
+	p.close
 
 	p.clear = function() {
 		this._redo.length = this._undo.length = 0;

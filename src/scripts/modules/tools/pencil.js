@@ -37,7 +37,8 @@ define(['modules/tools/toolbase', 'core/color'], function( ToolBase, Color ) {
 				'click' : self._onPixelClickBinded,
 				'mousedown' : self._onDrawingBinded,
 				'mousemove' : self._onDrawBinded,
-				'mouseup' : self._offDrawingBinded
+				'mouseup' : self._offDrawingBinded,
+				'mouseout' : self._offDrawingBinded
 			}, '.layers');
 		},
 
@@ -47,7 +48,8 @@ define(['modules/tools/toolbase', 'core/color'], function( ToolBase, Color ) {
 				'click' : self._onPixelClickBinded,
 				'mousedown' : self._onDrawingBinded,
 				'mousemove' : self._onDrawBinded,
-				'mouseup' : self._offDrawingBinded
+				'mouseup' : self._offDrawingBinded,
+				'mouseout' : self._offDrawingBinded
 			}, '.layers');
 		},
 
@@ -79,7 +81,7 @@ define(['modules/tools/toolbase', 'core/color'], function( ToolBase, Color ) {
 				prevPos = self._prevPos,
 				project = self._activeProject;
 
-			if( self._isDrawing && prevPos.x !== undefined && prevPos.y !== undefined ) {
+			if( self._isDrawing ) {
 				coords = project.globalToLocal( evt.pageX, evt.pageY, evt.srcElement );
 				project.line( coords.x, coords.y, prevPos.x, prevPos.y, self._color );
 				prevPos.x = coords.x;
@@ -90,7 +92,7 @@ define(['modules/tools/toolbase', 'core/color'], function( ToolBase, Color ) {
 			return false;
 		},
 
-		_offDrawing : function() {
+		_offDrawing : function( evt ) {
 			var self = this;
 			self._isDrawing = false;
 			delete self._prevPos.x;
@@ -99,9 +101,17 @@ define(['modules/tools/toolbase', 'core/color'], function( ToolBase, Color ) {
 		},
 
 		_onDrawing : function( evt ) {
-			var self = this;
+
+			var coords,
+				self = this,
+				prevPos = self._prevPos,
+				project = self._activeProject;
+
 			self._isDrawing = true;
-			self._onDraw( evt );
+			coords = project.globalToLocal( evt.pageX, evt.pageY, evt.srcElement );
+			prevPos.x = coords.x;
+			prevPos.y = coords.y;
+
 			return false;
 		},
 
