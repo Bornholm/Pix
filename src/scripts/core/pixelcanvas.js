@@ -1,5 +1,5 @@
-define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color', 'core/actionmanager', 'core/action'],
- function( Class, Widget, AsyncTask, Color, ActionManager, Action ) {
+define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color', 'core/actionmanager', 'core/action', 'core/helpers/geom'],
+ function( Class, Widget, AsyncTask, Color, ActionManager, Action, Geom ) {
 
 	"use strict";
 
@@ -65,7 +65,6 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color', 'core/action
 
 		setPixel : function( x, y, color ) {
 
-
 			var pixels, data, i, len,
 				self = this,
 				zoom = self._zoom,
@@ -73,9 +72,6 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color', 'core/action
 				zContext = self.getContext( true );
 
 			color = color.toRGBA();
-
-			x = x/zoom | 0; //  x | 0 == Math.floor(x)
-			y = y/zoom | 0;
 
 			pixels = context.getImageData( x, y, 1, 1 );
 			data = pixels.data;
@@ -114,9 +110,6 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color', 'core/action
 				zoom = self._zoom,
 				context = self.getContext();
 
-			x = x/zoom | 0; //  x | 0 == Math.floor(x)
-			y = y/zoom | 0;
-
 			pixels = context.getImageData( x, y, 1, 1 );
 			data = pixels.data;
 
@@ -129,43 +122,27 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color', 'core/action
 
 		},
 
+		getPixels : function( points ) {
+			var i, len, 
+				pixels = [],
+				self = this;
+			for( i = 0, len = points.length; i < len; i += 2 ) {
+				pixels.push( self.getPixel( points[i], points[i+1] ) );
+			}
+			return pixels;
+		},
 
-		setLine : function( x0, y0, x1, y1, color ) {
+		/* colors : [Color...] | Color */
+		setPixels : function( points, color ) {
+
 			var i, len,
 				self = this,
-				points = self.getLinePoints( x0, y0, x1, y1 );
+				isOneColor = color instanceof Color ? true : false,
+				zoom = self._zoom;
 
 			for( i = 0, len = points.length; i < len; i += 2 ) {
-				self.setPixel( points[i], points[i+1], color );
+				self.setPixel( points[i], points[i+1], isOneColor ? color : color[i >> 1] );
 			}
-
-		},
-
-		getLinePixels : function( x1, y1, x2, y2 ) {
-
-
-
-		},
-
-		// From http://free.pages.at/easyfilter/bresenham.html
-		// return [x0, y0, x1, y1, ... xn, yn];
-		getLinePoints : function( x0, y0, x1, y1 ) {
-
-			var e2,
-				points = [],
-				dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1,
-				dy = Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1, 
-				err = (dx>dy ? dx : -dy) >> 1;
-
-			while (true) {
-				points.push( x0, y0 );
-				if ( x0 === x1 && y0 === y1 ) break;
-				e2 = err;
-				if ( e2 >= -dx ) { err -= dy; x0 += sx; }
-				if ( e2 <= dy ) { err += dx; y0 += sy; }
-			}
-
-			return points;
 
 		},
 
@@ -346,6 +323,7 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color', 'core/action
 
 			var action,
 				self = this,
+				zoom = self.zoom(),
 				activeLayer = this.getActiveLayer(),
 				prevColor = activeLayer.getPixel( x, y );
 
@@ -354,17 +332,33 @@ define(['libs/classy', 'ui/widget', 'core/asynctask', 'core/color', 'core/action
 				{ method : "setPixel", context : self, args : [x, y, prevColor]  }
 			);
 
-			activeLayer.setPixel( x, y, color );
+			activeLayer.setPixel( x/zoom | 0 , y/zoom | 0, color );
 
 			this._actionManager.register( action );
 
 			this._dispatchChange( 'pixel', x, y, color );
 		},
 
-		line : function( x, y, x2, y2, color ) {
+		line : function( x0, y0, x1, y1, color ) {
 
-			this.getActiveLayer().setLine( x, y, x2, y2, color );
-			this._dispatchChange( 'line', x, y, x2, y2, color );
+			var action,
+				i, len, points,
+				self = this,
+				layer = self.getActiveLayer(),
+				zoom = self.zoom();
+
+			points = Geom.getLinePoints( x0/zoom | 0, y0/zoom | 0, x1/zoom | 0, y1/zoom | 0 );
+
+			action = new Action(
+				{ method : "setPixels", context : layer, args : [points, color]  },
+				{ method : "setPixels", context : layer, args : [points, layer.getPixels( points)]  }
+			);
+
+			layer.setPixels( points, color );
+
+			this._actionManager.register( action );
+
+			self._dispatchChange( 'line', x0, y0, x1, y1, color );
 		},
 
 		width : function( w ) {

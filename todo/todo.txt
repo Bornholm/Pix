@@ -1,12 +1,12 @@
-History Manager
+
 Pipette
+Fill
 Spritesheet generation w/ JSON Description
 Animation & Live Preview
 Keyboard shortcuts
 Load/Save project @LocalStorage
 Zoom %
 Layers
-Maximize/Minimize Panel
 Confirm page close
 Open image w/ URL & local file
 x Tab system
@@ -17,3 +17,4 @@ x AsyncTask @Worker
 x Widget @Backbone @View
 x Project -> Widget
 x Palette
+x History Manager
