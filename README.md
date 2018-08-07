@@ -39,7 +39,7 @@ Libraries
 * [Mustache](http://mustache.github.com/) - _Templating Lib_
 * [Marked](https://github.com/chjj/marked) - _Text to HTML Lib_
 * [LessCSS](http://lesscss.org/) - _CSS Lib_
-* [Jasmine](http://pivotal.github.com/jasmine/) - _Testing Lib_
+* [Jasmine](https://jasmine.github.io/) - _Testing Lib_
 
 
 Screenshots
